@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 
-class IdleWidget extends StatelessWidget {
-  const IdleWidget({
+class WorkingWidget extends StatelessWidget {
+  const WorkingWidget({
     super.key,
     required this.appState,
   });
@@ -29,11 +29,7 @@ class IdleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const Text(
-          'You have pushed the button this many times:',
-        ),
-        Text(
-          '${appState.counter}',
-          style: Theme.of(context).textTheme.headlineMedium,
+          'Working',
         ),
       ],
     );

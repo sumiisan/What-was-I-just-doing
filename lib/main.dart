@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'idle.dart';
+import 'working.dart';
 
 void main() {
   runApp(const MainApp());
@@ -104,10 +106,17 @@ class ContentPage extends StatelessWidget {
   final AppState appState;
 
   @override
-  Widget build(BuildContext context) {  
-    return CounterWidget(appState: appState);
+  Widget build(BuildContext context) {
+    switch(appState.activityState) {
+      case ActivityState.idle:
+        return IdleWidget(appState: appState);
+      case ActivityState.working:
+        return WorkingWidget(appState: appState);
+    }
+
   }
 }
+
 
 class CounterWidget extends StatelessWidget {
   const CounterWidget({
