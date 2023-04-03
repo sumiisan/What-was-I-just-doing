@@ -49,11 +49,11 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => AppState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class AppState extends State<MyHomePage> {
+  int counter = 0;
   final ActivityState activityState = ActivityState.idle;
 
   void _incrementCounter() {
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      counter++;
     });
   }
 
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: ContentPage(counter: _counter),
+        child: ContentPage(appState: this),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
@@ -98,24 +98,24 @@ class _MyHomePageState extends State<MyHomePage> {
 class ContentPage extends StatelessWidget {
   const ContentPage({
     super.key,
-    required int counter,
-  }) : _counter = counter;
+    required AppState appState,
+  }) : this.appState = appState;
 
-  final int _counter;
+  final AppState appState;
 
   @override
-  Widget build(BuildContext context) {
-    return CounterWidget(counter: _counter);
+  Widget build(BuildContext context) {  
+    return CounterWidget(appState: appState);
   }
 }
 
 class CounterWidget extends StatelessWidget {
   const CounterWidget({
     super.key,
-    required int counter,
-  }) : _counter = counter;
+    required AppState appState,
+  }) : appState = appState;
 
-  final int _counter;
+  final AppState appState;
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +140,7 @@ class CounterWidget extends StatelessWidget {
           'You have pushed the button this many times:',
         ),
         Text(
-          '$_counter',
+          '${appState.counter}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ],
