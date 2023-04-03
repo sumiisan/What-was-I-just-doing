@@ -98,8 +98,8 @@ class AppState extends State<MyHomePage> {
 class ContentPage extends StatelessWidget {
   const ContentPage({
     super.key,
-    required AppState appState,
-  }) : this.appState = appState;
+    required this.appState,
+  });
 
   final AppState appState;
 
@@ -112,8 +112,8 @@ class ContentPage extends StatelessWidget {
 class CounterWidget extends StatelessWidget {
   const CounterWidget({
     super.key,
-    required AppState appState,
-  }) : appState = appState;
+    required this.appState,
+  });
 
   final AppState appState;
 
