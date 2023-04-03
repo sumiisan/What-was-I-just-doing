@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(what_am_i_doing_now LANGUAGES CXX)
+project(what_was_i_just_doing LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "what_am_i_doing_now")
+set(BINARY_NAME "what_was_i_just_doing")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

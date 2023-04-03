@@ -1,6 +1,6 @@
 {
-    "name": "what_am_i_doing_now",
-    "short_name": "what_am_i_doing_now",
+    "name": "what_was_i_just_doing",
+    "short_name": "what_was_i_just_doing",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
