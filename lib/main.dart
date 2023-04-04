@@ -68,7 +68,8 @@ class MyHomePage extends StatefulWidget {
 
 class AppState extends State<MyHomePage> {
   int counter = 0;
-  final ActivityState activityState = ActivityState.idle;
+  ActivityState activityState = ActivityState.idle;
+  bool isRecording = false;
 
   void _incrementCounter() {
     setState(() {
@@ -78,6 +79,22 @@ class AppState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       counter++;
+    });
+  }
+
+  void startRecording() {
+    setState(() {
+      isRecording = true;
+
+      //activityState = ActivityState.working;
+    });
+  }
+
+  void stopRecording() {
+    setState(() {
+      isRecording = false;
+
+      activityState = ActivityState.working;
     });
   }
 
