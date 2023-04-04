@@ -1,0 +1,6 @@
+{
+  "whatDoYouWantToDo": "What do you want to do next?",
+  "@whatDoYouWantToDo": { 
+    "description": "something to do next"
+  }
+}

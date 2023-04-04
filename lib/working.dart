@@ -27,8 +27,8 @@ class WorkingWidget extends StatelessWidget {
       // axis because Columns are vertical (the cross axis would be
       // horizontal).
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const Text(
+      children: const <Widget>[
+        Text(
           'Working',
         ),
       ],

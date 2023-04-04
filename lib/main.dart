@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'idle.dart';
 import 'working.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,6 +28,16 @@ class MainApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', 'US'),
+        const Locale('ja', 'JP'),
+      ],
       home: const MyHomePage(title: 'What was I just doing?'),
     );
   }
@@ -84,9 +96,12 @@ class AppState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: ContentPage(appState: this),
+        child:
+        Localizations.override(   // override locale for testing purpose TODO: remove this later
+            context: context,
+            locale: const Locale('ja'),
+            child: ContentPage(appState: this),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'calendar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({
@@ -12,6 +14,13 @@ class IdleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var message = "undefined";
+    var localization = AppLocalizations.of(context);
+    if (localization != null) {
+      message = localization.whatDoYouWantToDo;
+    }
+
     return Column(
       // Column is also a layout widget. It takes a list of children and
       // arranges them vertically. By default, it sizes itself to fit its
@@ -30,8 +39,9 @@ class IdleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CalendarWidget(appState: appState),
-        const Text(
-          'You have pushed the button this many times:',
+        Text(
+          message.toString()
+          ,
         ),
         Text(
           '${appState.counter}',

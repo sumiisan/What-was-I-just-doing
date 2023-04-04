@@ -10,7 +10,7 @@ class CalendarWidget extends StatelessWidget {
 
   final AppState appState;
 
-  String getDateString() {
+  String dateString() {
     var formatter = DateFormat.MEd().add_jm();
     return formatter.format(DateTime.now());
   }
@@ -35,7 +35,7 @@ class CalendarWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          getDateString(),
+          dateString(),
         ),
       ],
     );
