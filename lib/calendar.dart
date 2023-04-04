@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
-import 'calendar.dart';
+import 'package:intl/intl.dart';
 
-class IdleWidget extends StatelessWidget {
-  const IdleWidget({
+class CalendarWidget extends StatelessWidget {
+  const CalendarWidget({
     super.key,
     required this.appState,
   });
 
   final AppState appState;
+
+  String getDateString() {
+    var formatter = DateFormat.MEd().add_jm();
+    return formatter.format(DateTime.now());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +34,8 @@ class IdleWidget extends StatelessWidget {
       // horizontal).
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        CalendarWidget(appState: appState),
-        const Text(
-          'You have pushed the button this many times:',
-        ),
         Text(
-          '${appState.counter}',
-          style: Theme.of(context).textTheme.headlineMedium,
+          getDateString(),
         ),
       ],
     );
