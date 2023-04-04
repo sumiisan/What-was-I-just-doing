@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
+import 'recorder.dart';
 
 class RecordingButton extends StatelessWidget {
   const RecordingButton({
@@ -11,11 +12,22 @@ class RecordingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        appState.startRecording();
-      },
-      child: const Text('Start Recording'),
-    );
+
+    if (appState.isRecording) {
+      return ElevatedButton(
+        onPressed: () {
+          appState.stopRecording();
+        },
+        child: const Text('Stop Recording'),
+      );
+    } else {
+      return ElevatedButton(
+        onPressed: () {
+          appState.startRecording();
+        },
+        child: const Text('Start Recording'),
+      );
+    }
+    
   }
 }
