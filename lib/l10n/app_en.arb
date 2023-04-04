@@ -1,6 +1,8 @@
 {
   "whatDoYouWantToDo": "What do you want to do next?",
-  "@whatDoYouWantToDo": { 
-    "description": "something to do next"
-  }
+  "recordNextActivity": "Record what you do next",
+  "endRecording": "End recording",
+  "recordingInProgress": "now recording..",
+  "listenAgain": "Listen again",
+  "stopPlayback": "Stop"
 }

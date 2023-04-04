@@ -3,10 +3,7 @@ import 'idle.dart';
 import 'working.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-//import 'recorder.dart';
-import 'player.dart';
-
+import 'simple_recorder.dart';
 
 void main() {
   runApp(const MainApp());
@@ -63,8 +60,8 @@ class MyHomePage extends StatefulWidget {
 
 class AppState extends State<MyHomePage> {
   int counter = 0;
-  ActivityState activityState = ActivityState.idle;
-  final AudioPlayer player = AudioPlayer();
+  var activityState = ActivityState.idle;
+  final recorder = SimpleRecorder();
 
   void _incrementCounter() {
     setState(() {
@@ -72,17 +69,17 @@ class AppState extends State<MyHomePage> {
     });
   }
 
-  void recordingEnded(String? recordedAudioUrl) {
+  void startRecord() {
+//    recorder.startRecording();
+  }
+
+  void recordingEnded() {
     setState(() {
       activityState = ActivityState.working;
     });
 
     Future.delayed(const Duration(seconds: 2), () {
-      if (recordedAudioUrl != null) {
-        player.startPlaying(recordedAudioUrl!);
-      } else {
-        print("no audio recorded");
-      }
+//        recorder.playRecorded();
     });    
   }
 

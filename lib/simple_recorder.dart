@@ -25,6 +25,10 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'main.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 /*
  * This is an example showing how to record to a Dart Stream.
  * It writes all the recorded data from a Stream to a File, which is completely stupid:
@@ -58,6 +62,8 @@ class SimpleRecorder extends StatefulWidget {
   _SimpleRecorderState createState() => _SimpleRecorderState();
 }
 
+enum RecorderWidgetMode { record, playback }
+
 class _SimpleRecorderState extends State<SimpleRecorder> {
   Codec _codec = Codec.aacMP4;
   String _mPath = 'tau_file.mp4';
@@ -66,6 +72,9 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
+
+  RecorderWidgetMode mode = RecorderWidgetMode.record;
+  
 
   @override
   void initState() {
@@ -195,37 +204,46 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(children: [
+
+    var ctx = AppLocalizations.of(context);
+    var recordCaption = ctx?.recordNextActivity ?? "[missing]";
+    var endRecordCaption = ctx?.endRecording ?? "[missing]";
+    var recordingCaption = ctx?.recordingInProgress ?? "[missing]";
+    var playCaption = ctx?.listenAgain ?? "[missing]";
+    var stopPlayCaption = ctx?.stopPlayback ?? "[missing]";
+
+    switch (mode) {
+      case RecorderWidgetMode.record:
+        return Row(children: [
             ElevatedButton(
               onPressed: getRecorderFn(),
               //color: Colors.white,
               //disabledColor: Colors.grey,
-              child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
+              child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Text(_mRecorder!.isRecording
-                ? 'Recording in progress'
-                : 'Recorder is stopped'),
-          ]),
-        Row(children: [
+                ? recordingCaption
+                : ''),
+          ]);
+      case RecorderWidgetMode.playback:
+        return Row(children: [
             ElevatedButton(
               onPressed: getPlaybackFn(),
               //color: Colors.white,
               //disabledColor: Colors.grey,
-              child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
+              child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
             Text(_mPlayer!.isPlaying
-                ? 'Playback in progress'
-                : 'Player is stopped'),
-          ]),
-      ]
-    );
+                ? 'Playing'
+                : ''),
+          ]);
+    }
+
   }
 }

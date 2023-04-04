@@ -15,12 +15,7 @@ class IdleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    var message = "undefined";
-    var localization = AppLocalizations.of(context);
-    if (localization != null) {
-      message = localization.whatDoYouWantToDo;
-    }
+    var message = AppLocalizations.of(context)?.whatDoYouWantToDo ?? "[missing]";
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -34,7 +29,6 @@ class IdleWidget extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         SimpleRecorder(),
-        //RecordingButton(appState: appState),
       ],
     );
   }
