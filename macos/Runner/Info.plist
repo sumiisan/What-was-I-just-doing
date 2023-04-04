@@ -26,6 +26,8 @@
 	<string>$(PRODUCT_COPYRIGHT)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We will use the microphone to record your voice.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

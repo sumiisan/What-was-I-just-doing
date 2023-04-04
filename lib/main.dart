@@ -4,6 +4,10 @@ import 'working.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+//import 'recorder.dart';
+import 'player.dart';
+
+
 void main() {
   runApp(const MainApp());
 }
@@ -17,26 +21,17 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'What was I just doing?',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        const Locale('en', 'US'),
-        const Locale('ja', 'JP'),
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('ja', 'JP'),
       ],
       home: const MyHomePage(title: 'What was I just doing?'),
     );
@@ -69,7 +64,7 @@ class MyHomePage extends StatefulWidget {
 class AppState extends State<MyHomePage> {
   int counter = 0;
   ActivityState activityState = ActivityState.idle;
-  bool isRecording = false;
+  final AudioPlayer player = AudioPlayer();
 
   void _incrementCounter() {
     setState(() {
@@ -77,18 +72,18 @@ class AppState extends State<MyHomePage> {
     });
   }
 
-  void startRecording() {
+  void recordingEnded(String? recordedAudioUrl) {
     setState(() {
-      isRecording = true;
-    });
-  }
-
-  void stopRecording() {
-    setState(() {
-      isRecording = false;
-
       activityState = ActivityState.working;
     });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (recordedAudioUrl != null) {
+        player.startPlaying(recordedAudioUrl!);
+      } else {
+        print("no audio recorded");
+      }
+    });    
   }
 
   void finishWork() {

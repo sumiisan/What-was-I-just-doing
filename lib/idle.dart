@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'calendar.dart';
-import 'recordingButton.dart';
+//import 'recording_button.dart';
+import 'simple_recorder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class IdleWidget extends StatelessWidget {
@@ -32,7 +33,8 @@ class IdleWidget extends StatelessWidget {
           '${appState.counter}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
-        RecordingButton(appState: appState),
+        SimpleRecorder(),
+        //RecordingButton(appState: appState),
       ],
     );
   }

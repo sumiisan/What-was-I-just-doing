@@ -21,7 +21,7 @@ class WorkingWidget extends StatelessWidget {
           onPressed: () {
             appState.finishWork();
           },
-          child: Text('Finish'),
+          child: const Text('Finish'),
         ),
       ],
     );
