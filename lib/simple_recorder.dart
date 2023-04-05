@@ -1,4 +1,9 @@
 /*
+ * This file was originally part of Flutter-Sound. (simple_recorder.dart)
+ * and was modified heavily by sumiisan to fit the needs of this (what was I just doing) project.
+ *
+ * original:
+ * 
  * Copyright 2018, 2019, 2020, 2021 Dooboolab.
  *
  * This file is part of Flutter-Sound.
@@ -18,6 +23,8 @@
  */
 
 import 'dart:async';
+import 'package:provider/provider.dart';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -29,42 +36,21 @@ import 'main.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-/*
- * This is an example showing how to record to a Dart Stream.
- * It writes all the recorded data from a Stream to a File, which is completely stupid:
- * if an App wants to record something to a File, it must not use Streams.
- *
- * The real interest of recording to a Stream is for example to feed a
- * Speech-to-Text engine, or for processing the Live data in Dart in real time.
- *
- */
-
 ///
 typedef _Fn = void Function();
 
-/* This does not work. on Android we must have the Manifest.permission.CAPTURE_AUDIO_OUTPUT permission.
- * But this permission is _is reserved for use by system components and is not available to third-party applications._
- * Pleaser look to [this](https://developer.android.com/reference/android/media/MediaRecorder.AudioSource#VOICE_UPLINK)
- *
- * I think that the problem is because it is illegal to record a communication in many countries.
- * Probably this stands also on iOS.
- * Actually I am unable to record DOWNLINK on my Xiaomi Chinese phone.
- *
- */
-//const theSource = AudioSource.voiceUpLink;
-//const theSource = AudioSource.voiceDownlink;
-
 const theSource = AudioSource.microphone;
 
-/// Example app.
-class SimpleRecorder extends StatefulWidget {
+class SimpleRecorderWidget extends StatefulWidget {
+  const SimpleRecorderWidget({super.key});
+
   @override
-  _SimpleRecorderState createState() => _SimpleRecorderState();
+  Recorder createState() => Recorder();
 }
 
-enum RecorderWidgetMode { record, playback }
+enum RecorderWidgetMode { record, playback, confirm }
 
-class _SimpleRecorderState extends State<SimpleRecorder> {
+class Recorder extends State<SimpleRecorderWidget> {
   Codec _codec = Codec.aacMP4;
   String _mPath = 'tau_file.mp4';
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
@@ -73,8 +59,10 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
 
+  bool _playing = false;
+  _Fn onPlayEnded = () {};
+
   RecorderWidgetMode mode = RecorderWidgetMode.record;
-  
 
   @override
   void initState() {
@@ -154,7 +142,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
     });
   }
 
-  void stopRecorder() async {
+  Future<void> stopRecorder() async {
     await _mRecorder!.stopRecorder().then((value) {
       setState(() {
         //var url = value;
@@ -173,10 +161,15 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
             fromURI: _mPath,
             //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
             whenFinished: () {
-              setState(() {});
+              setState(() {
+                _playing = false;
+              });
+              onPlayEnded();
             })
         .then((value) {
-      setState(() {});
+      setState(() {
+        _playing = true;
+      });
     });
   }
 
@@ -188,11 +181,12 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
 // ----------------------------- UI --------------------------------------------
 
-  _Fn? getRecorderFn() {
-    if (!_mRecorderIsInited || !_mPlayer!.isStopped) {
-      return null;
-    }
-    return _mRecorder!.isStopped ? record : stopRecorder;
+  bool isRecording() {
+    return !_mRecorder!.isStopped;
+  }
+
+  bool isInitialized() {
+    return _mRecorderIsInited && _mPlayerIsInited;
   }
 
   _Fn? getPlaybackFn() {
@@ -205,20 +199,31 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   @override
   Widget build(BuildContext context) {
 
+    var appState = context.watch<AppState>();
+    appState.injectRecorder(this);
+
     var ctx = AppLocalizations.of(context);
+
+    var prompt1 = ctx?.whatDoYouWantToDo ?? "[missing]";
+    var prompt2 = ctx?.sayNextActivity ?? "[missing]";
+
     var recordCaption = ctx?.recordNextActivity ?? "[missing]";
     var endRecordCaption = ctx?.endRecording ?? "[missing]";
     var recordingCaption = ctx?.recordingInProgress ?? "[missing]";
+
+    var playbackCaption = ctx?.playRecording ?? "[missing]";
     var playCaption = ctx?.listenAgain ?? "[missing]";
     var stopPlayCaption = ctx?.stopPlayback ?? "[missing]";
+    var confirmText = ctx?.confirmText ?? "[missing]";
+    var proceedCaption = ctx?.proceed ?? "[missing]";
+    var retakeCaption = ctx?.recordAgain ?? "[missing]";
 
     switch (mode) {
       case RecorderWidgetMode.record:
-        return Row(children: [
+        return Column(children: [
+            Text(_mRecorder!.isRecording ? prompt2 : prompt1),
             ElevatedButton(
-              onPressed: getRecorderFn(),
-              //color: Colors.white,
-              //disabledColor: Colors.grey,
+              onPressed: appState.recordButtonTapped,
               child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
             ),
             const SizedBox(
@@ -228,21 +233,34 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                 ? recordingCaption
                 : ''),
           ]);
+
       case RecorderWidgetMode.playback:
-        return Row(children: [
-            ElevatedButton(
-              onPressed: getPlaybackFn(),
-              //color: Colors.white,
-              //disabledColor: Colors.grey,
-              child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Text(_mPlayer!.isPlaying
-                ? 'Playing'
-                : ''),
-          ]);
+        return Column(children: [
+          Text(playbackCaption),
+        ]);
+
+      case RecorderWidgetMode.confirm:
+        return Column(children: [
+          Text(confirmText),
+          ElevatedButton(
+            onPressed: appState.recordingEnded,
+            child: Text(proceedCaption),
+          ),
+          ElevatedButton(
+            onPressed: appState.confirmRecord,
+            child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
+          ),
+          ElevatedButton(
+            onPressed: appState.startRecord,
+            child: Text(retakeCaption),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Text(_mPlayer!.isPlaying
+              ? 'Playing'
+              : ''),
+        ]);
     }
 
   }

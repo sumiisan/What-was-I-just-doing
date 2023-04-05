@@ -15,20 +15,12 @@ class IdleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var message = AppLocalizations.of(context)?.whatDoYouWantToDo ?? "[missing]";
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CalendarWidget(appState: appState),
-        Text(
-          message.toString()
-        ),
-        Text(
-          '${appState.counter}',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        SimpleRecorder(),
+        SimpleRecorderWidget(),
       ],
     );
   }

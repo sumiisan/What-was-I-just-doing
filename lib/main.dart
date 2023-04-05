@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'idle.dart';
 import 'working.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,25 +14,29 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'What was I just doing?',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    var title = AppLocalizations.of(context)?.whatWasIJustDoing ?? "?";
+    return ChangeNotifierProvider(
+      create: (context) => AppState(),
+      child: MaterialApp(
+        title: title,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 40, 183, 194)),
+        ),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', 'US'),
+          Locale('ja', 'JP'),
+        ],
+        home: MyHomePage(),
       ),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-        Locale('ja', 'JP'),
-      ],
-      home: const MyHomePage(title: 'What was I just doing?'),
     );
   }
 }
@@ -40,102 +46,88 @@ enum ActivityState {
   working,
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => AppState();
-}
-
-class AppState extends State<MyHomePage> {
-  int counter = 0;
-  var activityState = ActivityState.idle;
-  final recorder = SimpleRecorder();
-
-  void _incrementCounter() {
-    setState(() {
-      counter++;
-    });
-  }
-
-  void startRecord() {
-//    recorder.startRecording();
-  }
-
-  void recordingEnded() {
-    setState(() {
-      activityState = ActivityState.working;
-    });
-
-    Future.delayed(const Duration(seconds: 2), () {
-//        recorder.playRecorded();
-    });    
-  }
-
-  void finishWork() {
-    setState(() {
-      activityState = ActivityState.idle;
-    });
-  }
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    var title = AppLocalizations.of(context)?.whatWasIJustDoing ?? "[a]";
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child:
         Localizations.override(   // override locale for testing purpose TODO: remove this later
             context: context,
             locale: const Locale('ja'),
-            child: ContentPage(appState: this),
+            child: const ContentPage(),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class AppState extends ChangeNotifier {
+  var activityState = ActivityState.idle;
+  Recorder? recorder;
+
+  void injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
+    recorder = instance;
+  }
+
+  void startRecord() {
+    recordButtonTapped();
+  }
+
+  void recordButtonTapped() async {
+    if (recorder == null) { return; }
+
+    if (!recorder!.isInitialized()) {
+      return;   // TODO: implement error handling
+    }
+
+    recorder?.mode = RecorderWidgetMode.record;
+
+    if (recorder!.isRecording()) {
+      await recorder?.stopRecorder();
+      confirmRecord();
+    } else {
+      recorder?.record();
+    }
+  }
+
+  void confirmRecord() {
+    recorder?.mode = RecorderWidgetMode.playback;
+    recorder?.onPlayEnded = () { recorder?.mode = RecorderWidgetMode.confirm; };
+    recorder?.play();
+  }
+
+  void recordingEnded() {
+    activityState = ActivityState.working;
+    notifyListeners();
+  }
+
+  void finishWork() {
+    activityState = ActivityState.idle;
+    notifyListeners();
   }
 }
 
 class ContentPage extends StatelessWidget {
   const ContentPage({
     super.key,
-    required this.appState,
   });
-
-  final AppState appState;
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<AppState>();
     switch(appState.activityState) {
       case ActivityState.idle:
         return IdleWidget(appState: appState);
       case ActivityState.working:
         return WorkingWidget(appState: appState);
     }
-
   }
 }

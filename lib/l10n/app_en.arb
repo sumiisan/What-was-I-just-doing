@@ -1,8 +1,16 @@
 {
+  "whatWasIJustDoing": "What was I just doing?",
+  
   "whatDoYouWantToDo": "What do you want to do next?",
   "recordNextActivity": "Record what you do next",
+  "sayNextActivity": "Say what you do next",
   "endRecording": "End recording",
-  "recordingInProgress": "now recording..",
+  "recordingInProgress": "recording your voice..",
+
+  "playRecording": "playing back your recorded voice..", 
+  "confirmText": "Do you want to do this now?",
+  "proceed": "Great!", 
   "listenAgain": "Listen again",
+  "recordAgain": "Record again",
   "stopPlayback": "Stop"
 }

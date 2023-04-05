@@ -1,8 +1,16 @@
 {
-  "whatDoYouWantToDo": "これから何をする?",
+  "whatWasIJustDoing": "いまなにしてたっけ?",
+
+  "whatDoYouWantToDo": "これからなにをする?",
   "recordNextActivity": "次にすることを録音する",
+  "sayNextActivity": "次にすることを話してください",
   "endRecording": "録音を終了する",
-  "recordingInProgress": "録音中..",
-  "listenAgain": "もう一度聞く",
+  "recordingInProgress": "あなたの声を録音しています",
+
+  "playRecording": "あなたの録音した声を再生しています", 
+  "confirmText": "これからこれをしますか?",
+  "proceed": "オーケー!", 
+  "listenAgain": "聞きなおす",
+  "recordAgain": "録音しなおす",
   "stopPlayback": "止める"
 }
