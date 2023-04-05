@@ -38,6 +38,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   audio_session: ^0.1.13
+  path_provider: any
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +66,10 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/audio/
+#    - assets/audio/imakara.mp3
+#    - assets/audio/woShimasu.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

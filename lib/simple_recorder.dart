@@ -23,10 +23,12 @@
  */
 
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
@@ -52,7 +54,7 @@ enum RecorderWidgetMode { record, playback, confirm }
 
 class Recorder extends State<SimpleRecorderWidget> {
   Codec _codec = Codec.aacMP4;
-  String _mPath = 'tau_file.mp4';
+  String _mPath = 'task.mp4';
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
@@ -91,21 +93,13 @@ class Recorder extends State<SimpleRecorderWidget> {
   }
 
   Future<void> openTheRecorder() async {
-    if (!kIsWeb) {
-      var status = await Permission.microphone.request();
-      if (status != PermissionStatus.granted) {
-        throw RecordingPermissionException('Microphone permission not granted');
-      }
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Microphone permission not granted');
     }
+    
     await _mRecorder!.openRecorder();
-    if (!await _mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
-      _codec = Codec.opusWebM;
-      _mPath = 'tau_file.webm';
-      if (!await _mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
-        _mRecorderIsInited = true;
-        return;
-      }
-    }
+
     final session = await AudioSession.instance;
     await session.configure(AudioSessionConfiguration(
       avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
@@ -151,20 +145,42 @@ class Recorder extends State<SimpleRecorderWidget> {
     });
   }
 
-  void play() {
+  void playRecorded() {
+    playSequence([_mPath]);
+  }
+
+  void playSequence(List items) async {
     assert(_mPlayerIsInited &&
         _mplaybackReady &&
         _mRecorder!.isStopped &&
         _mPlayer!.isStopped);
+
+    if (items.isEmpty) {
+      onPlayEnded();
+      return;
+    }
+
+    var queue = [...items]; // copy the list
+    var currentItem = queue.removeAt(0);
+    
+    if (currentItem == "*") { // replace "*" by the recorded file
+      currentItem = _mPath;
+    } else {
+      var file = await getFileFromAssets("audio/$currentItem.m4a");
+      currentItem = file.path;
+    }
+
+    print("🟠 Playing $currentItem");
+
     _mPlayer!
         .startPlayer(
-            fromURI: _mPath,
-            //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+            fromURI: currentItem,
+            //codec: _codec,
             whenFinished: () {
               setState(() {
                 _playing = false;
               });
-              onPlayEnded();
+              playSequence(queue);
             })
         .then((value) {
       setState(() {
@@ -177,6 +193,26 @@ class Recorder extends State<SimpleRecorderWidget> {
     _mPlayer!.stopPlayer().then((value) {
       setState(() {});
     });
+  }
+
+
+  // Utils
+
+  Future<File> getFileFromAssets(String path) async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    var filePath = "$tempPath/$path";
+    var file = File(filePath);
+    if (file.existsSync()) {
+      return file;
+    } else {
+      final byteData = await rootBundle.load('assets/$path');
+      final buffer = byteData.buffer;
+      await file.create(recursive: true);
+      return file
+          .writeAsBytes(buffer.asUint8List(byteData.offsetInBytes,
+          byteData.lengthInBytes));
+    }
   }
 
 // ----------------------------- UI --------------------------------------------
@@ -193,7 +229,7 @@ class Recorder extends State<SimpleRecorderWidget> {
     if (!_mPlayerIsInited || !_mplaybackReady || !_mRecorder!.isStopped) {
       return null;
     }
-    return _mPlayer!.isStopped ? play : stopPlayer;
+    return _mPlayer!.isStopped ? playRecorded : stopPlayer;
   }
 
   @override
@@ -224,6 +260,10 @@ class Recorder extends State<SimpleRecorderWidget> {
             Text(_mRecorder!.isRecording ? prompt2 : prompt1),
             ElevatedButton(
               onPressed: appState.recordButtonTapped,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _mRecorder!.isRecording ? const Color.fromARGB(30, 255, 0, 0) : const Color.fromARGB(30, 0, 200, 0),
+                minimumSize: const Size(300, 70),
+              ),
               child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
             ),
             const SizedBox(

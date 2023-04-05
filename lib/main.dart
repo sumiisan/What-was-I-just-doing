@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,14 +61,25 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Center(
-        child:
-        Localizations.override(   // override locale for testing purpose TODO: remove this later
-            context: context,
-            locale: const Locale('ja'),
-            child: const ContentPage(),
+      body: DefaultTextStyle(
+        style: const TextStyle(
+          color: Color.fromARGB(255, 65, 65, 65),
+          fontSize: 30,
         ),
-      ),
+        child: Center(
+          child:
+          ButtonTheme(
+            minWidth: 400,
+            height: 60,
+            child: Localizations.override(   // override locale for testing purpose TODO: remove this later
+              context: context,
+              locale: const Locale('ja'),
+              child: const ContentPage(),
+            ),
+          ), 
+          
+        ),
+      ) 
     );
   }
 }
@@ -73,9 +88,12 @@ class AppState extends ChangeNotifier {
   var activityState = ActivityState.idle;
   Recorder? recorder;
 
+  // DI
   void injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
     recorder = instance;
   }
+
+  // Navigation
 
   void startRecord() {
     recordButtonTapped();
@@ -101,7 +119,7 @@ class AppState extends ChangeNotifier {
   void confirmRecord() {
     recorder?.mode = RecorderWidgetMode.playback;
     recorder?.onPlayEnded = () { recorder?.mode = RecorderWidgetMode.confirm; };
-    recorder?.play();
+    recorder?.playSequence(["imakara","*","woShimasu"]);
   }
 
   void recordingEnded() {
@@ -113,6 +131,9 @@ class AppState extends ChangeNotifier {
     activityState = ActivityState.idle;
     notifyListeners();
   }
+
+
+
 }
 
 class ContentPage extends StatelessWidget {

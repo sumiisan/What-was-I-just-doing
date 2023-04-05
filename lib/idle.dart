@@ -19,7 +19,7 @@ class IdleWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        CalendarWidget(appState: appState),
+        CalendarWidget(),
         SimpleRecorderWidget(),
       ],
     );

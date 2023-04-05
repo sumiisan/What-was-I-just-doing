@@ -5,10 +5,7 @@ import 'package:intl/intl.dart';
 class CalendarWidget extends StatelessWidget {
   const CalendarWidget({
     super.key,
-    required this.appState,
   });
-
-  final AppState appState;
 
   String dateString() {
     var formatter = DateFormat.MEd().add_jm();
@@ -34,9 +31,13 @@ class CalendarWidget extends StatelessWidget {
       // horizontal).
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          dateString(),
-        ),
+        FittedBox(
+          fit: BoxFit.fitWidth, 
+          child: Text(
+            "  ${dateString()}  ", 
+            textScaleFactor: 3.0,
+          ),
+        )
       ],
     );
   }
