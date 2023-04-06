@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'app_state.dart';
 import 'calendar.dart';
-//import 'recording_button.dart';
 import 'simple_recorder.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({

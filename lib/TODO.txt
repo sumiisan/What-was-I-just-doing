@@ -2,11 +2,6 @@ TODO list
 
 
 - Basic functionality
-    - Play recorded task randomly
-        - set interval
-            - default: 5..10 minutes
-            - frequent: 2..5 minutes
-            - infrequent: 10..30 minutes
     - Finish or Abort task
 
 
@@ -19,7 +14,7 @@ TODO list
 
 - Audio
     - Crop silence before and after speech
-    
+
     - Normalize audio level
         - calculate RMS of audio file and determine the amplitude multiplier
         - apply peak limiter

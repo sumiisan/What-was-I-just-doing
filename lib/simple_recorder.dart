@@ -36,7 +36,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:logger/logger.dart';
 
-import 'main.dart';
+import 'app_state.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -152,11 +152,11 @@ class Recorder extends State<SimpleRecorderWidget> {
     });
   }
 
-  void playRecorded() {
-    playSequence(["*"]);
+  Future<void> playRecorded() async {
+    return playSequence(["*"]);
   }
 
-  void playSequence(List items) async {
+  Future<void> playSequence(List items) async {
     assert(_mPlayerIsInited &&
         _mplaybackReady &&
         (_mRecorder?.isStopped ?? true) &&  // mRecorder may be released
