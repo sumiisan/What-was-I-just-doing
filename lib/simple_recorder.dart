@@ -46,7 +46,7 @@ typedef _Fn = void Function();
 const theSource = AudioSource.microphone;
 
 class SimpleRecorderWidget extends StatefulWidget {
-  const SimpleRecorderWidget({super.key, required RecorderWidgetMode mode}) : mode = RecorderWidgetMode.record;
+  const SimpleRecorderWidget({super.key, required RecorderWidgetMode mode}) : this.mode = mode;
 
   final RecorderWidgetMode mode;
 
@@ -69,7 +69,7 @@ class Recorder extends State<SimpleRecorderWidget> {
 
   _Fn onPlayEnded = () {};
 
-  RecorderWidgetMode mode = RecorderWidgetMode.record;
+  RecorderWidgetMode mode;
 
   @override
   void initState() {
