@@ -34,6 +34,8 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:logger/logger.dart';
+
 import 'main.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -44,24 +46,27 @@ typedef _Fn = void Function();
 const theSource = AudioSource.microphone;
 
 class SimpleRecorderWidget extends StatefulWidget {
-  const SimpleRecorderWidget({super.key});
+  const SimpleRecorderWidget({super.key, required RecorderWidgetMode mode}) : mode = RecorderWidgetMode.record;
+
+  final RecorderWidgetMode mode;
 
   @override
-  Recorder createState() => Recorder();
+  Recorder createState() => Recorder(mode: mode);
 }
 
-enum RecorderWidgetMode { record, playback, confirm }
+enum RecorderWidgetMode { none, record, playback, confirm }
 
 class Recorder extends State<SimpleRecorderWidget> {
-  Codec _codec = Codec.aacMP4;
-  String _mPath = 'task.mp4';
-  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
-  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
+  Recorder({required this.mode});
+
+  final Codec _codec = Codec.aacMP4;
+  final String _mPath = 'task.mp4';
+  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
+  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder(logLevel: Level.error);
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
-  bool _mplaybackReady = false;
+  bool _mplaybackReady = true;
 
-  bool _playing = false;
   _Fn onPlayEnded = () {};
 
   RecorderWidgetMode mode = RecorderWidgetMode.record;
@@ -132,7 +137,9 @@ class Recorder extends State<SimpleRecorderWidget> {
       audioSource: theSource,
     )
         .then((value) {
-      setState(() {});
+      setState(() {
+        _mplaybackReady = false;
+      });
     });
   }
 
@@ -146,13 +153,13 @@ class Recorder extends State<SimpleRecorderWidget> {
   }
 
   void playRecorded() {
-    playSequence([_mPath]);
+    playSequence(["*"]);
   }
 
   void playSequence(List items) async {
     assert(_mPlayerIsInited &&
         _mplaybackReady &&
-        _mRecorder!.isStopped &&
+        (_mRecorder?.isStopped ?? true) &&  // mRecorder may be released
         _mPlayer!.isStopped);
 
     if (items.isEmpty) {
@@ -170,21 +177,17 @@ class Recorder extends State<SimpleRecorderWidget> {
       currentItem = file.path;
     }
 
-    print("🟠 Playing $currentItem");
-
     _mPlayer!
         .startPlayer(
             fromURI: currentItem,
             //codec: _codec,
             whenFinished: () {
               setState(() {
-                _playing = false;
               });
               playSequence(queue);
             })
         .then((value) {
       setState(() {
-        _playing = true;
       });
     });
   }
@@ -255,6 +258,9 @@ class Recorder extends State<SimpleRecorderWidget> {
     var retakeCaption = ctx?.recordAgain ?? "[missing]";
 
     switch (mode) {
+      case RecorderWidgetMode.none:
+        return Container();
+
       case RecorderWidgetMode.record:
         return Column(children: [
             Text(_mRecorder!.isRecording ? prompt2 : prompt1),
@@ -283,7 +289,7 @@ class Recorder extends State<SimpleRecorderWidget> {
         return Column(children: [
           Text(confirmText),
           ElevatedButton(
-            onPressed: appState.recordingEnded,
+            onPressed: appState.startWork,
             child: Text(proceedCaption),
           ),
           ElevatedButton(

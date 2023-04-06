@@ -20,7 +20,7 @@ class IdleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CalendarWidget(),
-        SimpleRecorderWidget(),
+        SimpleRecorderWidget(mode: RecorderWidgetMode.record),
       ],
     );
   }

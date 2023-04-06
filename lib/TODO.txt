@@ -1,0 +1,28 @@
+TODO list
+
+
+- Basic functionality
+    - Play recorded task randomly
+        - set interval
+            - default: 5..10 minutes
+            - frequent: 2..5 minutes
+            - infrequent: 10..30 minutes
+    - Finish or Abort task
+
+
+- UI
+    - Extended fetaures
+        - Multiple tasks
+        - Recent tasks (finished and unfinished)
+            - resume task
+            - time spent
+
+- Audio
+    - Crop silence before and after speech
+    
+    - Normalize audio level
+        - calculate RMS of audio file and determine the amplitude multiplier
+        - apply peak limiter
+
+    - Pitch shift recorded audio
+        - i want it to sound like a parrot parroting back.

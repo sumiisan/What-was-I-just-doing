@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:what_was_i_just_doing/simple_recorder.dart';
 import 'main.dart';
 
 class WorkingWidget extends StatelessWidget {
@@ -23,6 +24,7 @@ class WorkingWidget extends StatelessWidget {
           },
           child: const Text('Finish'),
         ),
+        SimpleRecorderWidget(mode: RecorderWidgetMode.none),
       ],
     );
   }

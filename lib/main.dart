@@ -1,6 +1,5 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +49,13 @@ enum ActivityState {
   working,
 }
 
+enum RemindFrequency {
+  frequent,
+  normal,
+  rare,
+  debug,
+}
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
 
@@ -86,11 +92,33 @@ class MyHomePage extends StatelessWidget {
 
 class AppState extends ChangeNotifier {
   var activityState = ActivityState.idle;
+  var remindFrequency = RemindFrequency.debug;
+  late Timer _timer;
   Recorder? recorder;
+
+  final minimumTimeTable = {  // minutes
+    RemindFrequency.frequent: 2,
+    RemindFrequency.normal: 5,
+    RemindFrequency.rare: 10,
+    RemindFrequency.debug: 0.1,
+  };
+
+  final maximumTimeTable = {  // minutes
+    RemindFrequency.frequent: 5,
+    RemindFrequency.normal: 10,
+    RemindFrequency.rare: 30,
+    RemindFrequency.debug: 0.3,
+  };
 
   // DI
   void injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
     recorder = instance;
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   // Navigation
@@ -99,7 +127,7 @@ class AppState extends ChangeNotifier {
     recordButtonTapped();
   }
 
-  void recordButtonTapped() async {
+  void recordButtonTapped() async { // start or stop record
     if (recorder == null) { return; }
 
     if (!recorder!.isInitialized()) {
@@ -122,18 +150,43 @@ class AppState extends ChangeNotifier {
     recorder?.playSequence(["imakara","*","woShimasu"]);
   }
 
-  void recordingEnded() {
+  void startWork() {
     activityState = ActivityState.working;
     notifyListeners();
+    startReminder();
   }
 
   void finishWork() {
     activityState = ActivityState.idle;
+    stopReminder();
     notifyListeners();
   }
 
+  void startReminder() {
+    scheduleNextReminder();
+  }
+  
+  void scheduleNextReminder() {
+    // decide next reminder time
+    var random = Random();
+    var fluct = (maximumTimeTable[remindFrequency]! - minimumTimeTable[remindFrequency]!) * 60 * random.nextDouble(); // seconds
+    var duration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
 
+    print("🟠 next reminder in $duration seconds");
+    _timer = Timer(Duration(seconds: duration), () {
+      doReminderTask();
+    });
+  }
 
+  void stopReminder() {
+    _timer.cancel();
+  }
+
+  void doReminderTask() {
+    print("🟠 fire reminder");
+    recorder?.playRecorded();
+    scheduleNextReminder();
+  }
 }
 
 class ContentPage extends StatelessWidget {
