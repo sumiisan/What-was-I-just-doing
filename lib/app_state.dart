@@ -1,13 +1,20 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//  entities
+import 'task.dart';
 
+//  widgets
 import 'idle.dart';
 import 'working.dart';
+
+//  services
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+//  utils
 import 'simple_recorder.dart';
 
 
@@ -24,8 +31,10 @@ enum RemindFrequency {
 }
 
 class AppState extends ChangeNotifier {
+  final taskData = TaskData();
   var activityState = ActivityState.idle;
   var remindFrequency = RemindFrequency.debug;
+  var currentTask = Task();
   late Timer _timer;
   Recorder? recorder;
 
@@ -84,12 +93,21 @@ class AppState extends ChangeNotifier {
   }
 
   void startWork() {
+    if (currentTask.description.isEmpty) {
+      currentTask.description = currentTask.id; // TODO: implement human friendly description
+      currentTask.mediaPath = recorder?.mediaPath ?? "";
+    }
+
     activityState = ActivityState.working;
     notifyListeners();
     startReminder();
   }
 
-  void finishWork() {
+  void finishWork({bool isAborted = false}) {
+    currentTask.isFinished = !isAborted;
+    taskData.storeTask(currentTask);
+    currentTask = Task();   // because we have stored the task, we can clear the current task
+
     activityState = ActivityState.idle;
     stopReminder();
     notifyListeners();

@@ -6,11 +6,18 @@
   "sayNextActivity": "Say what you do next",
   "endRecording": "End recording",
   "recordingInProgress": "recording your voice..",
+  "whatYouDidSoFar": "See what you did so far",
 
   "playRecording": "playing back your recorded voice..", 
   "confirmText": "Do you want to do this now?",
   "proceed": "Great!", 
   "listenAgain": "Listen again",
   "recordAgain": "Record again",
-  "stopPlayback": "Stop"
+  "stopPlayback": "Stop",
+
+  "workingOnTask": "Working",
+  "finishTask": "I'm done!",
+  "abortTask": "Abort",
+
+  "endOfStringAsset": "end"
 }

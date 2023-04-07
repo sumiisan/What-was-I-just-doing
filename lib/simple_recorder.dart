@@ -60,7 +60,7 @@ class Recorder extends State<SimpleRecorderWidget> {
   Recorder({required this.mode});
 
   final Codec _codec = Codec.aacMP4;
-  final String _mPath = 'task.mp4';
+  String mediaPath = 'task.m4a';
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder(logLevel: Level.error);
   bool _mPlayerIsInited = false;
@@ -130,9 +130,10 @@ class Recorder extends State<SimpleRecorderWidget> {
   // ----------------------  Here is the code for recording and playback -------
 
   void record() {
+    Logger().log(Level.debug, "Recorder.record() $mediaPath");
     _mRecorder!
         .startRecorder(
-      toFile: _mPath,
+      toFile: mediaPath,
       codec: _codec,
       audioSource: theSource,
     )
@@ -171,11 +172,13 @@ class Recorder extends State<SimpleRecorderWidget> {
     var currentItem = queue.removeAt(0);
     
     if (currentItem == "*") { // replace "*" by the recorded file
-      currentItem = _mPath;
+      currentItem = mediaPath;
     } else {
       var file = await getFileFromAssets("audio/$currentItem.m4a");
       currentItem = file.path;
     }
+
+    Logger().log(Level.debug, "Recorder.play() $currentItem");
 
     _mPlayer!
         .startPlayer(
@@ -240,6 +243,8 @@ class Recorder extends State<SimpleRecorderWidget> {
 
     var appState = context.watch<AppState>();
     appState.injectRecorder(this);
+    
+    mediaPath = "${appState.currentTask.id}.m4a";
 
     var ctx = AppLocalizations.of(context);
 

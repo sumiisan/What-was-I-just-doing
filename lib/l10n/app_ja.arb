@@ -6,11 +6,18 @@
   "sayNextActivity": "次にすることを話してください",
   "endRecording": "録音を終了する",
   "recordingInProgress": "あなたの声を録音しています",
+  "whatYouDidSoFar": "今までやったことを見る",
 
   "playRecording": "あなたの録音した声を再生しています", 
   "confirmText": "これからこれをしますか?",
   "proceed": "オーケー!", 
   "listenAgain": "聞きなおす",
   "recordAgain": "録音しなおす",
-  "stopPlayback": "とめる"
+  "stopPlayback": "とめる",
+
+  "workingOnTask": "作業中",
+  "finishTask": "できた！",
+  "abortTask": "できてないけどやめる！",
+
+  "endOfStringAsset": "おわり"
 }
