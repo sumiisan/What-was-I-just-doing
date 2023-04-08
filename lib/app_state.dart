@@ -11,8 +11,6 @@ import 'working.dart';
 //  services
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //  utils
 import 'simple_recorder.dart';
@@ -31,7 +29,7 @@ enum RemindFrequency {
 }
 
 class AppState extends ChangeNotifier {
-  final taskData = TaskData();
+  final _taskData = TaskData();
   var activityState = ActivityState.idle;
   var remindFrequency = RemindFrequency.debug;
   var currentTask = Task();
@@ -53,23 +51,29 @@ class AppState extends ChangeNotifier {
   };
 
   // DI
-  void injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
+  injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
     recorder = instance;
   }
 
   @override
-  void dispose() {
+  dispose() {
     _timer.cancel();
     super.dispose();
   }
 
+  // accessors
+  Future<List<Task>> getTasks() async {
+    await _taskData.loadTasks();
+    return _taskData.tasks;
+  }
+
   // Navigation
 
-  void startRecord() {
+  startRecord() {
     recordButtonTapped();
   }
 
-  void recordButtonTapped() async { // start or stop record
+  recordButtonTapped() async { // start or stop record
     if (recorder == null) { return; }
 
     if (!recorder!.isInitialized()) {
@@ -86,13 +90,13 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  void confirmRecord() {
+  confirmRecord() {
     recorder?.mode = RecorderWidgetMode.playback;
     recorder?.onPlayEnded = () { recorder?.mode = RecorderWidgetMode.confirm; };
     recorder?.playSequence(["imakara","*","woShimasu"]);
   }
 
-  void startWork() {
+  startWork() {
     if (currentTask.description.isEmpty) {
       currentTask.description = currentTask.id; // TODO: implement human friendly description
       currentTask.mediaPath = recorder?.mediaPath ?? "";
@@ -103,9 +107,9 @@ class AppState extends ChangeNotifier {
     startReminder();
   }
 
-  void finishWork({bool isAborted = false}) {
+  finishWork({bool isAborted = false}) {
     currentTask.isFinished = !isAborted;
-    taskData.storeTask(currentTask);
+    _taskData.storeTask(currentTask);
     currentTask = Task();   // because we have stored the task, we can clear the current task
 
     activityState = ActivityState.idle;
@@ -113,26 +117,27 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startReminder() {
+  startReminder() {
     scheduleNextReminder();
   }
   
-  void scheduleNextReminder() {
+  scheduleNextReminder() {
     // decide next reminder time
     var random = Random();
     var fluct = (maximumTimeTable[remindFrequency]! - minimumTimeTable[remindFrequency]!) * 60 * random.nextDouble(); // seconds
     var duration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
 
     _timer = Timer(Duration(seconds: duration), () {
+      currentTask.timeSpent += Duration(seconds: duration);
       doReminderTask();
     });
   }
 
-  void stopReminder() {
+  stopReminder() {
     _timer.cancel();
   }
 
-  void doReminderTask() {
+  doReminderTask() {
     if (recorder == null) { return; }
     recorder?.playRecorded().then((value) => {
       scheduleNextReminder()

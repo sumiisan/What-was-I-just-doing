@@ -2,15 +2,12 @@ TODO list
 
 
 - Basic functionality
-    - Finish or Abort task
-
 
 - UI
-    - Extended fetaures
-        - Multiple tasks
-        - Recent tasks (finished and unfinished)
-            - resume task
-            - time spent
+    - Recent tasks list (finished and unfinished)
+        - resume task
+        - time spent
+    - Multiple tasks
 
 - Audio
     - Crop silence before and after speech

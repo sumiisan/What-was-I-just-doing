@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_state.dart';
 import 'calendar.dart';
 import 'simple_recorder.dart';
+import 'task_list.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({
@@ -18,7 +19,22 @@ class IdleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CalendarWidget(),
-        SimpleRecorderWidget(mode: RecorderWidgetMode.record),
+
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Image.asset("assets/images/parrot.jpg"),
+            ),
+            Expanded(
+              flex: 7,
+              child: SimpleRecorderWidget(mode: RecorderWidgetMode.record),
+            ),
+          ],
+        ),
+
+        TaskListWidget(appState: appState),
+
       ],
     );
   }

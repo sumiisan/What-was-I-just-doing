@@ -40,6 +40,9 @@ dependencies:
   audio_session: ^0.1.13
   path_provider: any
   shared_preferences: any
+#  json_serializable: any
+#  json_annotation: ^4.8.0
+#  build_runner: any
 
 dev_dependencies:
   flutter_test:
@@ -69,8 +72,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/audio/
-#    - assets/audio/imakara.mp3
-#    - assets/audio/woShimasu.mp3
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
