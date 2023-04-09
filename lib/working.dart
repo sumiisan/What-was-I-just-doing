@@ -24,6 +24,7 @@ class WorkingWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Text(appState.currentTask.name),
         Text(workingMessage),
         ElevatedButton(
           onPressed: () {

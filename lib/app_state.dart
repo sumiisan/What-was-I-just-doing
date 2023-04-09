@@ -84,19 +84,26 @@ class AppState extends ChangeNotifier {
 
     if (recorder!.isRecording()) {
       await recorder?.stopRecorder();
-      confirmRecord();
+      confirmTask();
     } else {
       recorder?.record();
     }
   }
 
-  confirmRecord() {
+  confirmTask({Task? task}) {
+    if (task != null) {
+      currentTask = task;
+    }
+
     recorder?.mode = RecorderWidgetMode.playback;
     recorder?.onPlayEnded = () { recorder?.mode = RecorderWidgetMode.confirm; };
     recorder?.playSequence(["imakara","*","woShimasu"]);
   }
 
-  startWork() {
+  startWork({Task? task}) {
+    if (task != null) {
+      currentTask = task;
+    }
     if (currentTask.description.isEmpty) {
       currentTask.description = currentTask.id; // TODO: implement human friendly description
       currentTask.mediaPath = recorder?.mediaPath ?? "";

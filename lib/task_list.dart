@@ -19,13 +19,20 @@ class TaskListWidget extends StatelessWidget {
       builder: (context, AsyncSnapshot<List<Task>>tasks) {
         if (tasks.hasData) {
           NumberFormat timeFormat = NumberFormat("#,##0.0", locale);
+          const visualDensity = VisualDensity(horizontal: -4, vertical: -4);
           return Column(
             children: [
               for (var task in tasks.data!) 
                 ListTile(
-                  title: Text("${task.isFinished ? "✅" : "🏃‍♀️"} ${task.description}", 
-                  style: TextStyle(color: task.isFinished ? Colors.black : Colors.blue),), 
-                  trailing: Text("${timeFormat.format(task.timeSpent.inSeconds / 60.0)} min")
+                  leading: Text(task.isFinished ? "Done ✅" : "WIP 🏃‍♀️"), // TODO: use icons instead
+                  title: Text(task.name, 
+                    style: TextStyle(color: task.isFinished ? Colors.black : Colors.blue), 
+                  ),                  
+                  trailing: Text("${timeFormat.format(task.timeSpent.inSeconds / 60.0)} min"),
+                  visualDensity: visualDensity,
+                  onTap: () {
+                    appState.confirmTask(task: task);
+                  },
                 ),
             ],
           );

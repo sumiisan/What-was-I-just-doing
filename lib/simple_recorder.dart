@@ -298,7 +298,7 @@ class Recorder extends State<SimpleRecorderWidget> {
             child: Text(proceedCaption),
           ),
           ElevatedButton(
-            onPressed: appState.confirmRecord,
+            onPressed: appState.confirmTask,
             child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
           ),
           ElevatedButton(

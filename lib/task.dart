@@ -7,6 +7,7 @@ import 'dart:convert';
 //@JsonSerializable()
 class Task {
   String id;
+  String get name => formatDate(created);
   String description = "";
   String mediaPath = "";
   bool isFinished = false;
@@ -19,6 +20,48 @@ class Task {
       var dateString = formatter.format(DateTime.now());
       id = "Task-$dateString";
     }
+  }
+
+  String formatDate(DateTime date) {
+    var now = DateTime.now();
+    var today = DateTime(now.year, now.month, now.day);
+    var tomorrow = today.add(const Duration(days: 1));
+    var minutesAgo = now.difference(date).inMinutes;
+
+    var dateFormatter = DateFormat('yyyy-MM-dd');
+    var timeFormatter = DateFormat('HH:mm');
+
+    String dateString = dateFormatter.format(date);
+    String timeString = timeFormatter.format(date);
+
+    var dayDiff = tomorrow.difference(date).inDays;   // we need to compare to tomorrow, because today is 0
+    if (dayDiff == 1) {
+      dateString = "Yesterday";
+    } else if (dayDiff == 0) {
+      dateString = "Today";
+    } else if (date.year == now.year) {
+      dateString = "${date.day}.${date.month}";
+    } else
+    if (created.year == now.year) {
+      dateString = "${date.day}.${date.month}";
+    }
+
+    var relativeTimeString = "";
+    if (minutesAgo < 60) {
+      relativeTimeString = "${minutesAgo}min ago";
+    } else if (minutesAgo < 60 * 24) {
+      relativeTimeString = "${minutesAgo ~/ 60}h ago";
+    } else if (minutesAgo < 60 * 24 * 7) {
+      relativeTimeString = "${minutesAgo ~/ (60 * 24)}d ago";
+    } else if (minutesAgo < 60 * 24 * 7 * 4) {
+      relativeTimeString = "${minutesAgo ~/ (60 * 24 * 7)}w ago";
+    } else if (minutesAgo < 60 * 24 * 7 * 4 * 12) {
+      relativeTimeString = "${minutesAgo ~/ (60 * 24 * 7 * 4)}m ago";
+    } else {
+      relativeTimeString = "${minutesAgo ~/ (60 * 24 * 7 * 4 * 12)}y ago";
+    }
+
+    return "$dateString $timeString ($relativeTimeString)";
   }
 
   Map<String, dynamic> toJson() => {
