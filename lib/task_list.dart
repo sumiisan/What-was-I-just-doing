@@ -52,11 +52,17 @@ class _TaskListWidgetState extends State<TaskListWidget> {
         },
       );
     } else {
-      return ElevatedButton(onPressed: (){ 
-        setState(() {
-          isExpanded = true;
-        });
-        }, child: Text("past tasks"));
+      return ElevatedButton(
+        onPressed: (){ 
+          setState(() {
+            isExpanded = true;
+          });
+        }, 
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.background,
+        ),
+        child: Text("past tasks"));
     }
 
 

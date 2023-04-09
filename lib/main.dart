@@ -20,8 +20,10 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         title: title,
         theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 40, 183, 194)),
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor:
+           Color.fromARGB(255, 219, 146, 0),
+           ),
         ),
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -33,7 +35,7 @@ class MainApp extends StatelessWidget {
           Locale('en', 'US'),
           Locale('ja', 'JP'),
         ],
-        home: MyHomePage(),
+        home: const MyHomePage(),
       ),
     );
   }
@@ -53,7 +55,7 @@ class MyHomePage extends StatelessWidget {
       body: DefaultTextStyle(
         style: const TextStyle(
           color: Color.fromARGB(255, 65, 65, 65),
-          fontSize: 30,
+          fontSize: 24,
         ),
         child: Center(
           child:

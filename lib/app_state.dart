@@ -110,8 +110,9 @@ class AppState extends ChangeNotifier {
     if (task != null) {
       currentTask = task;
     }
-    if (currentTask.description.isEmpty) {
-      currentTask.description = currentTask.id; // TODO: implement human friendly description
+    
+    if (currentTask.timeSpent.inSeconds == 0) { // its a new task
+      currentTask.created = DateTime.now();
       currentTask.mediaPath = recorder?.mediaPath ?? "";
     }
 

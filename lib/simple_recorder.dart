@@ -272,7 +272,7 @@ class Recorder extends State<SimpleRecorderWidget> {
             ElevatedButton(
               onPressed: appState.recordButtonTapped,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _mRecorder!.isRecording ? const Color.fromARGB(30, 255, 0, 0) : const Color.fromARGB(30, 0, 200, 0),
+                //backgroundColor: _mRecorder!.isRecording ? const Color.fromARGB(30, 255, 0, 0) : const Color.fromARGB(30, 0, 200, 0),
                 minimumSize: const Size(300, 70),
               ),
               child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
