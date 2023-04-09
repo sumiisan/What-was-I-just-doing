@@ -4,9 +4,6 @@ TODO list
 - Basic functionality
 
 - UI
-    - Recent tasks list (finished and unfinished)
-        - resume task
-        - time spent
     - Multiple tasks
 
 - Audio
