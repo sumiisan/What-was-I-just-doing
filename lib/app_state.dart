@@ -100,6 +100,12 @@ class AppState extends ChangeNotifier {
     recorder?.playSequence(["imakara","*","woShimasu"]);
   }
 
+  newTask() {
+    currentTask = Task();
+    recorder?.mode = RecorderWidgetMode.record;
+    notifyListeners();
+  }
+
   startWork({Task? task}) {
     if (task != null) {
       currentTask = task;

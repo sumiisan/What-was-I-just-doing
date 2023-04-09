@@ -291,6 +291,8 @@ class Recorder extends State<SimpleRecorderWidget> {
         ]);
 
       case RecorderWidgetMode.confirm:
+        var isNewTask = appState.currentTask.timeSpent == 0;
+        
         return Column(children: [
           Text(confirmText),
           ElevatedButton(
@@ -301,10 +303,17 @@ class Recorder extends State<SimpleRecorderWidget> {
             onPressed: appState.confirmTask,
             child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
           ),
-          ElevatedButton(
-            onPressed: appState.startRecord,
-            child: Text(retakeCaption),
-          ),
+          if (isNewTask)
+            ElevatedButton(
+              onPressed: appState.startRecord,
+              child: Text(retakeCaption),
+            ),
+          if (!isNewTask)
+            ElevatedButton(
+              onPressed: appState.newTask,
+              child: Text("No"),
+            ),
+  
           const SizedBox(
             width: 20,
           ),
