@@ -31,7 +31,7 @@ enum RemindFrequency {
 class AppState extends ChangeNotifier {
   final _taskData = TaskData();
   var activityState = ActivityState.idle;
-  var remindFrequency = RemindFrequency.debug;
+  var remindFrequency = RemindFrequency.normal;
   var currentTask = Task();
   late Timer _timer;
   Recorder? recorder;
@@ -86,7 +86,7 @@ class AppState extends ChangeNotifier {
       await recorder?.stopRecorder();
       confirmTask();
     } else {
-      recorder?.record();
+      await recorder?.record();
     }
   }
 

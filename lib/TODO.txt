@@ -2,16 +2,19 @@ TODO list
 
 
 - Basic functionality
+    - bird's voice
+    - countdown bar or running indicator
+    - remind me now button
+    - display the time when the task was done
 
 - UI
-    - Multiple tasks
+    - set remind frequency
+    - update task deskription label periodically (relative time display)
+    - multiple tasks ?
 
 - Audio
-    - Crop silence before and after speech
 
-    - Normalize audio level
-        - calculate RMS of audio file and determine the amplitude multiplier
-        - apply peak limiter
+    - Apply peak limiter
 
     - Pitch shift recorded audio
         - i want it to sound like a parrot parroting back.

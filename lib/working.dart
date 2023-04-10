@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:what_was_i_just_doing/simple_recorder.dart';
+
 import 'app_state.dart';
+import 'audio_processing.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -26,6 +29,7 @@ class WorkingWidget extends StatelessWidget {
       children: <Widget>[
         Text(appState.currentTask.name),
         Text(workingMessage),
+        AudioProcessor(path: appState.currentTask.mediaPath),
         ElevatedButton(
           onPressed: () {
             appState.finishWork();

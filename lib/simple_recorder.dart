@@ -59,8 +59,8 @@ enum RecorderWidgetMode { none, record, playback, confirm }
 class Recorder extends State<SimpleRecorderWidget> {
   Recorder({required this.mode});
 
-  final Codec _codec = Codec.aacMP4;
-  String mediaPath = 'task.m4a';
+  final Codec _codec = Codec.pcm16WAV;
+  String mediaPath = 'task.wav';
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder(logLevel: Level.error);
   bool _mPlayerIsInited = false;
@@ -129,13 +129,17 @@ class Recorder extends State<SimpleRecorderWidget> {
 
   // ----------------------  Here is the code for recording and playback -------
 
-  void record() {
+  Future<void> record() async {
     Logger().log(Level.debug, "Recorder.record() $mediaPath");
+    final directory = await getTemporaryDirectory();
     _mRecorder!
         .startRecorder(
-      toFile: mediaPath,
+      toFile: "${directory.path}/$mediaPath",
       codec: _codec,
       audioSource: theSource,
+      numChannels: 1,
+      sampleRate: 44100,
+      bitRate: 16000,
     )
         .then((value) {
       setState(() {
@@ -172,9 +176,10 @@ class Recorder extends State<SimpleRecorderWidget> {
     var currentItem = queue.removeAt(0);
     
     if (currentItem == "*") { // replace "*" by the recorded file
-      currentItem = mediaPath;
+      final directory = await getTemporaryDirectory();
+      currentItem = "${directory.path}/$mediaPath";
     } else {
-      var file = await getFileFromAssets("audio/$currentItem.m4a");
+      var file = await getFileFromAssets("audio/$currentItem.wav");
       currentItem = file.path;
     }
 
@@ -183,7 +188,6 @@ class Recorder extends State<SimpleRecorderWidget> {
     _mPlayer!
         .startPlayer(
             fromURI: currentItem,
-            //codec: _codec,
             whenFinished: () {
               setState(() {
               });
@@ -244,7 +248,7 @@ class Recorder extends State<SimpleRecorderWidget> {
     var appState = context.watch<AppState>();
     appState.injectRecorder(this);
     
-    mediaPath = "${appState.currentTask.id}.m4a";
+    mediaPath = "${appState.currentTask.id}.wav";
 
     var ctx = AppLocalizations.of(context);
 
