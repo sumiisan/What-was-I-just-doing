@@ -31,14 +31,12 @@ class _AudioProcessorState extends State<AudioProcessor> {
 
   final String mediaPath;
 
-/*
   Future<Uint8List> getAssetData(String path) async {
     var byteData = await rootBundle.load(path);
     return byteData.buffer.asUint8List();
   }
-*/
 
-  Future<Uint8List> getMediaData(String path) async {
+  Future<Uint8List> getTemporaryData(String path) async {
     var file = File(path);
     return file.readAsBytes();
   }
@@ -64,14 +62,21 @@ class _AudioProcessorState extends State<AudioProcessor> {
     super.dispose();
   }
 
-  void play(String path) async {
+  void play({required String path, void Function()? onPlayEnded}) async {
     if (!busy && _mPlayerIsInited) {
       busy = true;
-      final directory = await getTemporaryDirectory();
 
-      buffer = FlutterSoundHelper().waveToPCMBuffer(
-        inputBuffer: await getMediaData("${directory.path}/$path"),
-      );
+      if (path.startsWith('temp:')) {
+        final directory = await getTemporaryDirectory();
+        buffer = FlutterSoundHelper().waveToPCMBuffer(
+          inputBuffer: await getTemporaryData("$directory/${path.substring(5)}"),
+        );
+      }
+      if (path.startsWith('assets:')) {
+        buffer = FlutterSoundHelper().waveToPCMBuffer(
+          inputBuffer: await getAssetData("assets/${path.substring(7)}"),
+        );
+      }
       await _mPlayer!.startPlayerFromStream(
         codec: Codec.pcm16,
         numChannels: _tNumChannels,
@@ -81,8 +86,49 @@ class _AudioProcessorState extends State<AudioProcessor> {
       var sl = normalizeAndStripSilence(buffer!.buffer.asByteData(0));
       sl = octaveUp(sl);
 
-      await _mPlayer!.feedFromStream(sl.buffer.asUint8List(sl.offsetInBytes, sl.lengthInBytes)).then((value) => busy = false);
+      await _mPlayer!.feedFromStream(sl.buffer.asUint8List(sl.offsetInBytes, sl.lengthInBytes));
+      busy = false;
+      if (onPlayEnded != null) { onPlayEnded(); }
     }
+  }
+
+  Future<void> playSequence({required List items, void Function()? onPlayEnded}) async {
+    var ready = (_mPlayerIsInited && (_mPlayer?.isStopped ?? false));
+
+    if (!ready) {
+      return;
+    }
+
+    if (items.isEmpty) {
+      if (onPlayEnded != null) {
+        onPlayEnded();
+      }
+      return;
+    }
+
+    var queue = [...items]; // copy the list
+    var currentItem = queue.removeAt(0);
+    
+    if (currentItem == "*") { // replace "*" by the recorded file
+      currentItem = "temp:$mediaPath";
+    } else {
+      currentItem = "assets:/audio/$mediaPath";
+    }
+
+    Logger().log(Level.debug, "Recorder.play() $currentItem");
+
+    _mPlayer!
+        .startPlayer(
+            fromURI: currentItem,
+            whenFinished: () {
+              setState(() {
+              });
+              playSequence(items: queue, onPlayEnded: onPlayEnded);
+            })
+        .then((value) {
+      setState(() {
+      });
+    });
   }
 
   ByteData octaveUp(ByteData input) {
@@ -216,6 +262,7 @@ class _AudioProcessorState extends State<AudioProcessor> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
         Container(
@@ -234,7 +281,7 @@ class _AudioProcessorState extends State<AudioProcessor> {
           child: Row(children: [
             ElevatedButton(
               onPressed: () {
-                play(mediaPath);
+                play(path: "temp:$mediaPath");
               },
               //color: Colors.white,
               child: Text('Play!'),
