@@ -29,7 +29,6 @@ class WorkingWidget extends StatelessWidget {
       children: <Widget>[
         Text(appState.currentTask.name),
         Text(workingMessage),
-        AudioProcessor(path: appState.currentTask.mediaPath),
         ElevatedButton(
           onPressed: () {
             appState.finishWork();

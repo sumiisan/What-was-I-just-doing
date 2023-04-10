@@ -13,23 +13,12 @@ const int _tSampleRate = 44100;
 const int _tNumChannels = 1;
 
 /// Example app.
-class AudioProcessor extends StatefulWidget {
-  const AudioProcessor({super.key, required String path}) : mediaPath = path;
-
-  final String mediaPath;
-
-  @override
-  _AudioProcessorState createState() => _AudioProcessorState(mediaPath: mediaPath);
-}
-
-class _AudioProcessorState extends State<AudioProcessor> {
-  _AudioProcessorState({required this.mediaPath});
+class AudioProcessor {
+  AudioProcessor();
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
-  late bool _mPlayerIsInited;
+  bool _mPlayerIsInited = false;
   Uint8List? buffer;
   bool busy = false;
-
-  final String mediaPath;
 
   Future<Uint8List> getAssetData(String path) async {
     var byteData = await rootBundle.load(path);
@@ -42,24 +31,15 @@ class _AudioProcessorState extends State<AudioProcessor> {
   }
 
   Future<void> init() async {
+    if (_mPlayerIsInited) return;
     await _mPlayer!.openPlayer();
+    _mPlayerIsInited = true;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    init().then((value) => setState(() {
-          _mPlayerIsInited = true;
-        }));
-  }
-
-  @override
   void dispose() {
     _mPlayer!.stopPlayer();
     _mPlayer!.closePlayer();
     _mPlayer = null;
-
-    super.dispose();
   }
 
   void play({required String path, void Function()? onPlayEnded}) async {
@@ -69,12 +49,12 @@ class _AudioProcessorState extends State<AudioProcessor> {
       if (path.startsWith('temp:')) {
         final directory = await getTemporaryDirectory();
         buffer = FlutterSoundHelper().waveToPCMBuffer(
-          inputBuffer: await getTemporaryData("$directory/${path.substring(5)}"),
+          inputBuffer: await getTemporaryData("${directory.path}/${path.substring(5)}"),
         );
       }
       if (path.startsWith('assets:')) {
         buffer = FlutterSoundHelper().waveToPCMBuffer(
-          inputBuffer: await getAssetData("assets/${path.substring(7)}"),
+          inputBuffer: await getAssetData("assets/${path.substring(7)}.wav"),
         );
       }
       await _mPlayer!.startPlayerFromStream(
@@ -88,7 +68,10 @@ class _AudioProcessorState extends State<AudioProcessor> {
 
       await _mPlayer!.feedFromStream(sl.buffer.asUint8List(sl.offsetInBytes, sl.lengthInBytes));
       busy = false;
-      if (onPlayEnded != null) { onPlayEnded(); }
+      Future.delayed(Duration(milliseconds: 100), () async {
+        await _mPlayer!.stopPlayer();
+        if (onPlayEnded != null) { onPlayEnded(); }
+      });
     }
   }
 
@@ -109,31 +92,16 @@ class _AudioProcessorState extends State<AudioProcessor> {
     var queue = [...items]; // copy the list
     var currentItem = queue.removeAt(0);
     
-    if (currentItem == "*") { // replace "*" by the recorded file
-      currentItem = "temp:$mediaPath";
-    } else {
-      currentItem = "assets:/audio/$mediaPath";
-    }
-
     Logger().log(Level.debug, "Recorder.play() $currentItem");
 
-    _mPlayer!
-        .startPlayer(
-            fromURI: currentItem,
-            whenFinished: () {
-              setState(() {
-              });
-              playSequence(items: queue, onPlayEnded: onPlayEnded);
-            })
-        .then((value) {
-      setState(() {
-      });
+    play(path: currentItem, onPlayEnded: () {
+      playSequence(items: queue, onPlayEnded: onPlayEnded);
     });
   }
 
   ByteData octaveUp(ByteData input) {
-    const cycle = 6000;
-    const halfCycle = 3000;
+    const cycle = 2000;
+    var halfCycle = cycle ~/ 2;
 
     var length = input.lengthInBytes;
     var output = ByteData(length);
@@ -259,7 +227,7 @@ class _AudioProcessorState extends State<AudioProcessor> {
 
 
   // ----------------------------------------------------------------------------------------------------------------------
-
+/*
   @override
   Widget build(BuildContext context) {
 
@@ -290,5 +258,5 @@ class _AudioProcessorState extends State<AudioProcessor> {
         ),
       ],
     );
-  }
+  }*/
 }

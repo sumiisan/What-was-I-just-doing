@@ -40,9 +40,6 @@ import 'app_state.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-///
-typedef _Fn = void Function();
-
 const theSource = AudioSource.microphone;
 
 class SimpleRecorderWidget extends StatefulWidget {
@@ -61,24 +58,13 @@ class Recorder extends State<SimpleRecorderWidget> {
 
   final Codec _codec = Codec.pcm16WAV;
   String mediaPath = 'task.wav';
-  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder(logLevel: Level.error);
-  bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
-  bool _mplaybackReady = true;
-
-  _Fn onPlayEnded = () {};
 
   RecorderWidgetMode mode;
 
   @override
   void initState() {
-    _mPlayer!.openPlayer().then((value) {
-      setState(() {
-        _mPlayerIsInited = true;
-      });
-    });
-
     openTheRecorder().then((value) {
       setState(() {
         _mRecorderIsInited = true;
@@ -89,9 +75,6 @@ class Recorder extends State<SimpleRecorderWidget> {
 
   @override
   void dispose() {
-    _mPlayer!.closePlayer();
-    _mPlayer = null;
-
     _mRecorder!.closeRecorder();
     _mRecorder = null;
     super.dispose();
@@ -143,7 +126,6 @@ class Recorder extends State<SimpleRecorderWidget> {
     )
         .then((value) {
       setState(() {
-        _mplaybackReady = false;
       });
     });
   }
@@ -151,64 +133,9 @@ class Recorder extends State<SimpleRecorderWidget> {
   Future<void> stopRecorder() async {
     await _mRecorder!.stopRecorder().then((value) {
       setState(() {
-        //var url = value;
-        _mplaybackReady = true;
       });
     });
   }
-
-  Future<void> playRecorded() async {
-    return playSequence(["*"]);
-  }
-
-  Future<void> playSequence(List items) async {
-    var ready = (_mPlayerIsInited &&
-        _mplaybackReady &&
-        (_mRecorder?.isStopped ?? true) &&  // mRecorder may be released
-        _mPlayer!.isStopped);
-
-    if (!ready) {
-      return;
-    }
-
-    if (items.isEmpty) {
-      onPlayEnded();
-      return;
-    }
-
-    var queue = [...items]; // copy the list
-    var currentItem = queue.removeAt(0);
-    
-    if (currentItem == "*") { // replace "*" by the recorded file
-      final directory = await getTemporaryDirectory();
-      currentItem = "${directory.path}/$mediaPath";
-    } else {
-      var file = await getFileFromAssets("audio/$currentItem.wav");
-      currentItem = file.path;
-    }
-
-    Logger().log(Level.debug, "Recorder.play() $currentItem");
-
-    _mPlayer!
-        .startPlayer(
-            fromURI: currentItem,
-            whenFinished: () {
-              setState(() {
-              });
-              playSequence(queue);
-            })
-        .then((value) {
-      setState(() {
-      });
-    });
-  }
-
-  void stopPlayer() {
-    _mPlayer!.stopPlayer().then((value) {
-      setState(() {});
-    });
-  }
-
 
   // Utils
 
@@ -236,14 +163,7 @@ class Recorder extends State<SimpleRecorderWidget> {
   }
 
   bool isInitialized() {
-    return _mRecorderIsInited && _mPlayerIsInited;
-  }
-
-  _Fn? getPlaybackFn() {
-    if (!_mPlayerIsInited || !_mplaybackReady || !_mRecorder!.isStopped) {
-      return null;
-    }
-    return _mPlayer!.isStopped ? playRecorded : stopPlayer;
+    return _mRecorderIsInited;
   }
 
   @override
@@ -309,7 +229,7 @@ class Recorder extends State<SimpleRecorderWidget> {
           ),
           ElevatedButton(
             onPressed: appState.confirmTask,
-            child: Text(_mPlayer!.isPlaying ? stopPlayCaption : playCaption),
+            child: Text(playCaption),
           ),
           if (isNewTask)
             ElevatedButton(
@@ -319,15 +239,12 @@ class Recorder extends State<SimpleRecorderWidget> {
           if (!isNewTask)
             ElevatedButton(
               onPressed: appState.newTask,
-              child: Text("No"),
+              child: const Text("No"),
             ),
   
           const SizedBox(
             width: 20,
           ),
-          Text(_mPlayer!.isPlaying
-              ? 'Playing'
-              : ''),
         ]);
     }
 

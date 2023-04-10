@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 //  utils
 import 'simple_recorder.dart';
-
+import 'audio_processing.dart';
 
 enum ActivityState {
   idle,
@@ -30,8 +30,10 @@ enum RemindFrequency {
 
 class AppState extends ChangeNotifier {
   final _taskData = TaskData();
+  final _audioProcessor = AudioProcessor();
+
   var activityState = ActivityState.idle;
-  var remindFrequency = RemindFrequency.normal;
+  var remindFrequency = RemindFrequency.debug;
   var currentTask = Task();
   late Timer _timer;
   Recorder? recorder;
@@ -49,6 +51,10 @@ class AppState extends ChangeNotifier {
     RemindFrequency.rare: 30,
     RemindFrequency.debug: 0.3,
   };
+
+  AppState() {
+    _audioProcessor.init();
+  }
 
   // DI
   injectRecorder(Recorder instance) {  // TODO: improve DI mechanism
@@ -96,8 +102,15 @@ class AppState extends ChangeNotifier {
     }
 
     recorder?.mode = RecorderWidgetMode.playback;
-    recorder?.onPlayEnded = () { recorder?.mode = RecorderWidgetMode.confirm; };
-    recorder?.playSequence(["imakara","*","woShimasu"]);
+    notifyListeners();    
+
+    _audioProcessor.playSequence(
+      items: ["assets:audio/imakara","temp:${currentTask.mediaPath}","assets:audio/woShimasu"],
+      onPlayEnded: () {
+        recorder?.mode = RecorderWidgetMode.confirm;
+        notifyListeners();
+      }
+    );
   }
 
   newTask() {
@@ -152,10 +165,19 @@ class AppState extends ChangeNotifier {
   }
 
   doReminderTask() {
+    /*
     if (recorder == null) { return; }
     recorder?.playRecorded().then((value) => {
       scheduleNextReminder()
     });
+    */
+    _audioProcessor.playSequence(
+      items: [/*"assets:audio/imakara",*/"temp:${currentTask.mediaPath}"/*,"assets:audio/woShimasu"*/],
+      onPlayEnded: () {
+        scheduleNextReminder();
+      }
+    );
+
   }
 }
 
