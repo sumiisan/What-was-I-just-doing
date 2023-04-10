@@ -162,10 +162,14 @@ class Recorder extends State<SimpleRecorderWidget> {
   }
 
   Future<void> playSequence(List items) async {
-    assert(_mPlayerIsInited &&
+    var ready = (_mPlayerIsInited &&
         _mplaybackReady &&
         (_mRecorder?.isStopped ?? true) &&  // mRecorder may be released
         _mPlayer!.isStopped);
+
+    if (!ready) {
+      return;
+    }
 
     if (items.isEmpty) {
       onPlayEnded();

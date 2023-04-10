@@ -17,4 +17,4 @@ TODO list
     - Apply peak limiter
 
     - Pitch shift recorded audio
-        - i want it to sound like a parrot parroting back.
+        - automatically determine cycle based on f0 freq, or avoid amplitude leap using bandpass filter

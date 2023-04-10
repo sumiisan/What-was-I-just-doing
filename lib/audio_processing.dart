@@ -78,13 +78,38 @@ class _AudioProcessorState extends State<AudioProcessor> {
         sampleRate: _tSampleRate,
       );
 
-      var sl = process(buffer!.buffer.asByteData(2048));   // crop head due to strange noise
+      var sl = normalizeAndStripSilence(buffer!.buffer.asByteData(0));
+      sl = octaveUp(sl);
 
       await _mPlayer!.feedFromStream(sl.buffer.asUint8List(sl.offsetInBytes, sl.lengthInBytes)).then((value) => busy = false);
     }
   }
 
-  ByteData process(ByteData data) {
+  ByteData octaveUp(ByteData input) {
+    const cycle = 6000;
+    const halfCycle = 3000;
+
+    var length = input.lengthInBytes;
+    var output = ByteData(length);
+
+    int p = 0;
+    while(p < length) {
+      int w = 0;
+      for (var q = 0; q < cycle; q += 4) {
+        if (p + q >= length || p + w + halfCycle >= length) break;
+        var v1 = input.getInt16(p + q, Endian.host);
+        output.setInt16(p + w, v1, Endian.host);
+        var v2 = input.getInt16(p + q + 2, Endian.host);
+        output.setInt16(p + w + halfCycle, v2, Endian.host);
+        w += 2;
+      }
+      p += cycle;
+    }
+
+    return output;
+  }
+
+  ByteData normalizeAndStripSilence(ByteData data) {
     var input = data;
     var length = input.lengthInBytes;
     
