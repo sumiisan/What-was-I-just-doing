@@ -47,7 +47,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           fit: BoxFit.contain, 
           child: Text(
             dateString(), 
-            textScaleFactor: 3.0,
+            textScaleFactor: 1.5,
           ),
         )
       ],

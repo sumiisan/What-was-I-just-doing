@@ -28,7 +28,8 @@ class WorkingWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        TaskNameLabel(appState: appState),
+        Text(ctx?.startDate ?? "Start date", textScaleFactor: 0.7,),
+        TaskNameLabel(task: appState.currentTask),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

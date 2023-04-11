@@ -57,9 +57,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
                         ? ctx?.done ?? "Done" 
                         : ctx?.wip ?? "WIP"
                       ), // TODO: use icons instead
-                      title: Text(task.localizedName(context: context), 
-                        style: TextStyle(color: task.isFinished ? Colors.black : Colors.blue), 
-                      ),
+                      title: TaskNameLabel(task: task), 
                       trailing: Text("${timeFormat.format(task.timeSpent.inSeconds / 60.0)} min"),
                       visualDensity: visualDensity,
                       onTap: () {

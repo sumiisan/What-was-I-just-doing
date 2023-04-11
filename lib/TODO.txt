@@ -1,13 +1,15 @@
 TODO list
 
 
+- Bugs
+    - created date sometimes resets
+    - time spent is bigger than the actual time
+
 - Basic functionality
-    - display the time when the task was done
     - chirp while idling
 
-- UI
-    - set remind frequency
-    - update task description label periodically (relative time display)
+- Advanced UI
+    - display the time when the task was done
     - multiple tasks ?
 
 - Audio

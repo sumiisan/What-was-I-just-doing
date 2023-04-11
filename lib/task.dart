@@ -1,11 +1,10 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:convert';
-
-import 'app_state.dart';
 
 class Task {
   String id;
@@ -160,16 +159,54 @@ class SharedPreferencesAccessor {
   }
 }
 
-class TaskNameLabel extends StatelessWidget {
+class TaskNameLabel extends StatefulWidget {
   const TaskNameLabel({
     super.key,
-    required this.appState,
+    required this.task,
   });
 
-  final AppState appState;
+  final Task task;
+
+  @override
+  State<TaskNameLabel> createState() => _TaskNameLabelState();
+}
+
+class _TaskNameLabelState extends State<TaskNameLabel> {
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    var interval = const Duration(seconds: 1);
+
+    var now = DateTime.now();
+    var created = widget.task.created;
+
+    if (created.isBefore(now.subtract(const Duration(hours: 1)))) {
+      interval = const Duration(minutes: 1);
+    }
+
+    if (created.isBefore(now.subtract(const Duration(days: 1)))) {
+      interval = const Duration(hours: 1);
+    }
+
+    _timer = Timer.periodic(interval, (timer) { 
+      setState(() {}); 
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text(appState.currentTask.localizedName(context: context));
+    return Text(
+      widget.task.localizedName(context: context),
+      style: TextStyle(color: widget.task.isFinished ? Colors.black : Colors.blue), 
+    );
   }
 }
