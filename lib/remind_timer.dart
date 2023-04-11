@@ -19,14 +19,14 @@ class RemindTimer {
   Timer? timer;
 
   final _minimumIntervalTable = {  // minutes
-    RemindFrequency.debug: 0.5,
+    RemindFrequency.debug: 0.2,
     RemindFrequency.frequent: 2,
     RemindFrequency.normal: 5,
     RemindFrequency.rare: 10,
   };
 
   final _maximumIntervalTable = {  // minutes
-    RemindFrequency.debug: 1.0,
+    RemindFrequency.debug: 0.3,
     RemindFrequency.frequent: 5,
     RemindFrequency.normal: 10,
     RemindFrequency.rare: 30,

@@ -6,7 +6,7 @@ TODO list
     - time spent is bigger than the actual time
 
 - Basic functionality
-    - chirp while idling
+    - silence idle chirping during night
 
 - Advanced UI
     - display the time when the task was done

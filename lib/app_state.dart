@@ -10,7 +10,7 @@ import 'task.dart';
 //  utils
 import 'simple_recorder.dart';
 import 'audio_processing.dart';
-import 'working_timer.dart';
+import 'remind_timer.dart';
 
 enum ActivityState {
   idle,
@@ -34,14 +34,14 @@ class AppState extends ChangeNotifier {
   var activityState = ActivityState.idle;
   var screenState = ScreenState.base;
   var modalDialogType = ModalDialogType.none;
-  var remindFrequency = RemindFrequency.debug;
+  var remindFrequency = RemindFrequency.normal;
   var currentTask = Task();
   final _timer = RemindTimer();
-  int timerDuration = 0;
   Recorder? recorder;
 
   AppState() {
     _audioProcessor.init();
+    scheduleNextReminder();   // idle chirping
   }
 
   // DI
@@ -136,6 +136,8 @@ class AppState extends ChangeNotifier {
     currentTask = Task();   // because we have stored the task, we can clear the current task
 
     activityState = ActivityState.idle;
+
+    scheduleNextReminder();   // idle chirping
     notifyListeners();
   }
 
@@ -150,7 +152,17 @@ class AppState extends ChangeNotifier {
   }
   
   scheduleNextReminder() {
-    _timer.start(frequency: remindFrequency, onFinish: () {
+    _timer.cancel();
+
+    var remindFrequencyForCurrentActivity = remindFrequency;
+    
+    if (activityState == ActivityState.idle) {  // idle chirping
+      remindFrequencyForCurrentActivity = RemindFrequency.normal;
+      // TODO: silence idle chirping during night
+
+    }
+    
+    _timer.start(frequency: remindFrequencyForCurrentActivity, onFinish: () {
       currentTask.timeSpent += _timer.interval;
       doReminderTask();
     });
@@ -185,15 +197,21 @@ class AppState extends ChangeNotifier {
   }
 
   double getProgress() {
-    if (!_timer.isActive) return 0;
-    return (_timer.elapsed.inMilliseconds / 1000) / timerDuration.toDouble();
+    if (!_timer.isActive || _timer.interval.inMilliseconds == 0) return 0;
+    return (_timer.elapsed.inMilliseconds / _timer.interval.inMilliseconds).clamp(0.0, 1.0);
   }
 
   doReminderTask() {
     var random = Random();
     var index = random.nextInt(3) + 1;
+
+    var items = ["assets:audio/parrot$index"];
+    if (activityState == ActivityState.working) {
+      items.add("temp:${currentTask.mediaPath}");
+    }
+
     _audioProcessor.playSequence(
-      items: ["assets:audio/parrot$index", "temp:${currentTask.mediaPath}"],
+      items: items,
       onPlayEnded: () {
         scheduleNextReminder();
       }
@@ -231,5 +249,4 @@ class AppState extends ChangeNotifier {
     modalDialogType = ModalDialogType.none;
     notifyListeners();
   }
-
 }
