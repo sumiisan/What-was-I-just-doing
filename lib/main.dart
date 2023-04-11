@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show SystemChrome, DeviceOrientation;
 import 'package:provider/provider.dart';
 import 'package:what_was_i_just_doing/task_list.dart';
 
-import 'app_state.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -11,6 +10,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'calendar.dart';
 import 'idle.dart';
 import 'working.dart';
+
+//  state
+import 'app_state.dart';
 
 void main() {
   runApp(const MainApp());

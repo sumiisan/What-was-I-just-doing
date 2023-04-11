@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:what_was_i_just_doing/simple_recorder.dart';
-import 'app_state.dart';
-import 'task.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'simple_recorder.dart';
+import 'app_state.dart';
+import 'task.dart';
 
 class TaskListWidget extends StatefulWidget {
   const TaskListWidget({

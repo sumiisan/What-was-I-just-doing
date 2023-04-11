@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'app_state.dart';
-import 'simple_recorder.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'simple_recorder.dart';
+import 'app_state.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({

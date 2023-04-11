@@ -1,12 +1,10 @@
-
 import 'package:flutter/material.dart';
-import 'task.dart';
-
-import 'app_state.dart';
-import 'progress_indicator.dart';
-
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'progress_indicator.dart';
+import 'task.dart';
+import 'app_state.dart';
 
 
 class WorkingWidget extends StatelessWidget {

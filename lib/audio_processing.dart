@@ -1,13 +1,12 @@
-
-import 'dart:async';
-import 'dart:io';
+import 'dart:async' show Future;
+import 'dart:io' show File;
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+
+import 'package:logger/logger.dart' show Level, Logger;
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:flutter/services.dart' show PlatformAssetBundle, rootBundle;
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart' show getTemporaryDirectory;
 
 const int _tSampleRate = 44100;
 const int _tNumChannels = 1;
@@ -45,7 +44,7 @@ class AudioProcessor {
   void play({required String path, void Function()? onPlayEnded}) async {
     if (!busy && _mPlayerIsInited) {
       busy = true;
-      var shoudProcess = true;
+      var shouldProcess = true;
 
       if (path.startsWith('temp:')) {
         final directory = await getTemporaryDirectory();
@@ -63,7 +62,7 @@ class AudioProcessor {
       if (path.startsWith('assets:')) {
         String fileName = path.substring(7);
         if (fileName.indexOf('parrot') >= 0) {    // TODO: remove this hack
-          shoudProcess = false;
+          shouldProcess = false;
         }
         buffer = FlutterSoundHelper().waveToPCMBuffer(
           inputBuffer: await getAssetData("assets/$fileName.wav"),
@@ -75,7 +74,7 @@ class AudioProcessor {
         sampleRate: _tSampleRate,
       );
 
-      if (shoudProcess) {
+      if (shouldProcess) {
         ByteData processBuffer = buffer!.buffer.asByteData(0);
         processBuffer = normalizeAndStripSilence(buffer!.buffer.asByteData(0));
         processBuffer = octaveUp(processBuffer);

@@ -22,9 +22,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import 'dart:async';
-import 'dart:io';
-import 'package:flutter/services.dart';
+import 'dart:async' show Future;
+import 'dart:io' show File, Directory;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -35,10 +35,10 @@ import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'app_state.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const theSource = AudioSource.microphone;
 
