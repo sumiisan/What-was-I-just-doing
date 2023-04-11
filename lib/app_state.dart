@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 //  entities
+import 'calendar.dart';
 import 'task.dart';
 
 //  widgets
@@ -89,7 +90,8 @@ class AppState extends ChangeNotifier {
     recorder?.mode = RecorderWidgetMode.record;
 
     if (recorder!.isRecording()) {
-      await recorder?.stopRecorder();
+      await recorder!.stopRecorder();
+      currentTask.mediaPath = recorder!.mediaPath;
       confirmTask();
     } else {
       await recorder?.record();
@@ -189,11 +191,29 @@ class ContentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    switch(appState.activityState) {
-      case ActivityState.idle:
-        return IdleWidget(appState: appState);
-      case ActivityState.working:
-        return WorkingWidget(appState: appState);
-    }
+
+    return Column(
+      children: [
+        const CalendarWidget(),
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Image.asset("assets/images/parrot.jpg"),
+            ),
+            Expanded(
+              flex: 7,
+              child: 
+                  appState.activityState == ActivityState.idle 
+                  ? IdleWidget(appState: appState) 
+                  : WorkingWidget(appState: appState)
+            ),
+          ],
+        ),
+      ],
+    );
+
+
+
   }
 }
