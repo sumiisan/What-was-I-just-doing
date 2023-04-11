@@ -27,13 +27,6 @@ enum ModalDialogType {
   confirmRecord,
 }
 
-enum RemindFrequency {
-  debug,
-  frequent,
-  normal,
-  rare,
-}
-
 class AppState extends ChangeNotifier {
   final _taskData = TaskData();
   final _audioProcessor = AudioProcessor();
@@ -43,23 +36,9 @@ class AppState extends ChangeNotifier {
   var modalDialogType = ModalDialogType.none;
   var remindFrequency = RemindFrequency.debug;
   var currentTask = Task();
-  final _timer = WorkingTimer();
+  final _timer = RemindTimer();
   int timerDuration = 0;
   Recorder? recorder;
-
-  final minimumTimeTable = {  // minutes
-    RemindFrequency.debug: 0.5,
-    RemindFrequency.frequent: 2,
-    RemindFrequency.normal: 5,
-    RemindFrequency.rare: 10,
-  };
-
-  final maximumTimeTable = {  // minutes
-    RemindFrequency.debug: 1.0,
-    RemindFrequency.frequent: 5,
-    RemindFrequency.normal: 10,
-    RemindFrequency.rare: 30,
-  };
 
   AppState() {
     _audioProcessor.init();
@@ -171,15 +150,11 @@ class AppState extends ChangeNotifier {
   }
   
   scheduleNextReminder() {
-    // decide next reminder time
-    var random = Random();
-    var fluct = (maximumTimeTable[remindFrequency]! - minimumTimeTable[remindFrequency]!) * 60 * random.nextDouble(); // seconds
-    timerDuration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
-
-    currentTask.timeSpent += Duration(seconds: timerDuration);
-    _timer.start(Duration(seconds: timerDuration), onFinish: () {
+    _timer.start(frequency: remindFrequency, onFinish: () {
+      currentTask.timeSpent += _timer.interval;
       doReminderTask();
     });
+    currentTask.timeSpent += const Duration(microseconds: 1);   // we add it right away to indicate that the task has started
   }
 
   fireReminder() {
