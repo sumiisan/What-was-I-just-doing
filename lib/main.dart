@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:what_was_i_just_doing/task_list.dart';
 
 import 'app_state.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+//  widgets
+import 'calendar.dart';
+import 'idle.dart';
+import 'working.dart';
 
 void main() {
   runApp(const MainApp());
@@ -75,3 +81,43 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+class ContentPage extends StatelessWidget {
+  const ContentPage({
+    super.key,
+  });
+
+  Widget baseWidget(AppState appState) {
+    return Column(
+      children: [
+        const CalendarWidget(),
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Image.asset("assets/images/parrot.jpg"),
+            ),
+            Expanded(
+              flex: 7,
+              child: 
+                  appState.activityState == ActivityState.idle 
+                  ? IdleWidget(appState: appState) 
+                  : WorkingWidget(appState: appState)
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<AppState>();
+
+    switch(appState.screenState) {
+      case ScreenState.base:
+        return baseWidget(appState);
+      case ScreenState.taskList:
+        return TaskListWidget(appState: appState);
+    }
+  }
+}

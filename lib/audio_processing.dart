@@ -45,6 +45,7 @@ class AudioProcessor {
   void play({required String path, void Function()? onPlayEnded}) async {
     if (!busy && _mPlayerIsInited) {
       busy = true;
+      var shoudProcess = true;
 
       if (path.startsWith('temp:')) {
         final directory = await getTemporaryDirectory();
@@ -53,8 +54,12 @@ class AudioProcessor {
         );
       }
       if (path.startsWith('assets:')) {
+        String fileName = path.substring(7);
+        if (fileName.indexOf('parrot') >= 0) {    // TODO: remove this hack
+          shoudProcess = false;
+        }
         buffer = FlutterSoundHelper().waveToPCMBuffer(
-          inputBuffer: await getAssetData("assets/${path.substring(7)}.wav"),
+          inputBuffer: await getAssetData("assets/$fileName.wav"),
         );
       }
       await _mPlayer!.startPlayerFromStream(
@@ -63,10 +68,14 @@ class AudioProcessor {
         sampleRate: _tSampleRate,
       );
 
-      var sl = normalizeAndStripSilence(buffer!.buffer.asByteData(0));
-      sl = octaveUp(sl);
+      if (shoudProcess) {
+        ByteData processBuffer = buffer!.buffer.asByteData(0);
+        processBuffer = normalizeAndStripSilence(buffer!.buffer.asByteData(0));
+        processBuffer = octaveUp(processBuffer);
+        buffer = processBuffer.buffer.asUint8List(processBuffer.offsetInBytes, processBuffer.lengthInBytes);
+      }
 
-      await _mPlayer!.feedFromStream(sl.buffer.asUint8List(sl.offsetInBytes, sl.lengthInBytes));
+      await _mPlayer!.feedFromStream(buffer!);
       busy = false;
       Future.delayed(Duration(milliseconds: 100), () async {
         await _mPlayer!.stopPlayer();

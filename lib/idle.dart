@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_state.dart';
 import 'simple_recorder.dart';
-import 'task_list.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({
@@ -17,9 +16,17 @@ class IdleWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        SimpleRecorderWidget(mode: RecorderWidgetMode.record),
-        TaskListWidget(appState: appState),
-
+        SimpleRecorderWidget(appState),
+        ElevatedButton(
+          onPressed: (){ 
+            appState.openTaskList();
+          }, 
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.background,
+          ),
+          child: Text("past tasks")
+        ),
       ],
     );
   }

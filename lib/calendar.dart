@@ -1,40 +1,52 @@
-import 'package:flutter/material.dart';
-import 'main.dart';
-import 'package:intl/intl.dart';
+import 'dart:async';
 
-class CalendarWidget extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+class CalendarWidget extends StatefulWidget {
   const CalendarWidget({
     super.key,
   });
 
-  String dateString() {
-    var formatter = DateFormat.MEd().add_jm();
-    return formatter.format(DateTime.now());
+  @override
+  State<CalendarWidget> createState() => _CalendarWidgetState();
+}
+
+class _CalendarWidgetState extends State<CalendarWidget> {
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) { setState(() {}); });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    var ctx = AppLocalizations.of(context);
+
+    var dateFormat = ctx?.dateTimeFormat ?? " MM-dd HH:mm:ss ";
+    var locale = ctx?.localeName ?? "en_US";
+
+    String dateString() {
+      var formatter = DateFormat(dateFormat, locale);
+      return formatter.format(DateTime.now());
+    }
+
     return Column(
-      // Column is also a layout widget. It takes a list of children and
-      // arranges them vertically. By default, it sizes itself to fit its
-      // children horizontally, and tries to be as tall as its parent.
-      //
-      // Invoke "debug painting" (press "p" in the console, choose the
-      // "Toggle Debug Paint" action from the Flutter Inspector in Android
-      // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-      // to see the wireframe for each widget.
-      //
-      // Column has various properties to control how it sizes itself and
-      // how it positions its children. Here we use mainAxisAlignment to
-      // center the children vertically; the main axis here is the vertical
-      // axis because Columns are vertical (the cross axis would be
-      // horizontal).
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         FittedBox(
-          fit: BoxFit.fitWidth, 
+          fit: BoxFit.contain, 
           child: Text(
-            "  ${dateString()}  ", 
+            dateString(), 
             textScaleFactor: 3.0,
           ),
         )

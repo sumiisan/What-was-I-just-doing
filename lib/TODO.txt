@@ -2,8 +2,8 @@ TODO list
 
 
 - Basic functionality
+    - sort task list
     - bird's voice
-    - countdown bar or running indicator
     - remind me now button
     - display the time when the task was done
 

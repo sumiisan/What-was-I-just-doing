@@ -31,7 +31,7 @@ import 'package:provider/provider.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
+import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart' show AudioSource;
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:logger/logger.dart';
@@ -43,25 +43,23 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 const theSource = AudioSource.microphone;
 
 class SimpleRecorderWidget extends StatefulWidget {
-  const SimpleRecorderWidget({super.key, required RecorderWidgetMode mode}) : this.mode = mode;
-
-  final RecorderWidgetMode mode;
+  const SimpleRecorderWidget(this.appState);
+  final AppState appState;
 
   @override
-  Recorder createState() => Recorder(mode: mode);
+  Recorder createState() => Recorder();
 }
 
 enum RecorderWidgetMode { none, record, playback, confirm }
 
 class Recorder extends State<SimpleRecorderWidget> {
-  Recorder({required this.mode});
+  Recorder();
 
+  var mode = RecorderWidgetMode.record;
   final Codec _codec = Codec.pcm16WAV;
   String mediaPath = 'task.wav';
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder(logLevel: Level.error);
   bool _mRecorderIsInited = false;
-
-  RecorderWidgetMode mode;
 
   @override
   void initState() {
@@ -184,11 +182,10 @@ class Recorder extends State<SimpleRecorderWidget> {
     var recordingCaption = ctx?.recordingInProgress ?? "[missing]";
 
     var playbackCaption = ctx?.playRecording ?? "[missing]";
-    var playCaption = ctx?.listenAgain ?? "[missing]";
-    var stopPlayCaption = ctx?.stopPlayback ?? "[missing]";
-    var confirmText = ctx?.confirmText ?? "[missing]";
-    var proceedCaption = ctx?.proceed ?? "[missing]";
-    var retakeCaption = ctx?.recordAgain ?? "[missing]";
+
+    if (appState.modalDialogType == ModalDialogType.confirmRecord) {
+      return ConfirmRecordingWidget(appState: appState);
+    }
 
     switch (mode) {
       case RecorderWidgetMode.none:
@@ -200,7 +197,6 @@ class Recorder extends State<SimpleRecorderWidget> {
             ElevatedButton(
               onPressed: appState.recordButtonTapped,
               style: ElevatedButton.styleFrom(
-                //backgroundColor: _mRecorder!.isRecording ? const Color.fromARGB(30, 255, 0, 0) : const Color.fromARGB(30, 0, 200, 0),
                 minimumSize: const Size(300, 70),
               ),
               child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
@@ -218,35 +214,54 @@ class Recorder extends State<SimpleRecorderWidget> {
           Text(playbackCaption),
         ]);
 
-      case RecorderWidgetMode.confirm:
-        var isNewTask = appState.currentTask.timeSpent == 0;
-        
-        return Column(children: [
-          Text(confirmText),
-          ElevatedButton(
-            onPressed: appState.startWork,
-            child: Text(proceedCaption),
-          ),
-          ElevatedButton(
-            onPressed: appState.confirmTask,
-            child: Text(playCaption),
-          ),
-          if (isNewTask)
-            ElevatedButton(
-              onPressed: appState.startRecord,
-              child: Text(retakeCaption),
-            ),
-          if (!isNewTask)
-            ElevatedButton(
-              onPressed: appState.newTask,
-              child: const Text("No"),
-            ),
-  
-          const SizedBox(
-            width: 20,
-          ),
-        ]);
+      case RecorderWidgetMode.confirm:    // we did hanlde this case above (modalDialogType == ModalDialogType.confirmRecord)
+        return Container();
     }
+  }
+}
 
+class ConfirmRecordingWidget extends StatelessWidget {
+  const ConfirmRecordingWidget({
+    super.key,
+    required this.appState,
+  });
+
+  final AppState appState;
+
+  @override
+  Widget build(BuildContext context) {
+    //var isNewTask = appState.currentTask.timeSpent.inSeconds == 0;
+
+    var ctx = AppLocalizations.of(context);
+    var confirmText = ctx?.confirmText ?? "[missing]";
+    var proceedCaption = ctx?.proceed ?? "[missing]";
+    //var retakeCaption = ctx?.recordAgain ?? "[missing]";
+    var playCaption = ctx?.listenAgain ?? "[missing]";
+
+    return Column(children: [
+      Text(confirmText),
+      ElevatedButton(
+        onPressed: appState.startWork,
+        child: Text(proceedCaption),
+      ),
+      ElevatedButton(
+        onPressed: appState.confirmTask,
+        child: Text(playCaption),
+      ),
+/*      if (isNewTask)
+        ElevatedButton(
+          onPressed: appState.startRecord,
+          child: Text(retakeCaption),
+        ),
+      if (!isNewTask)*/
+      ElevatedButton(
+        onPressed: appState.closeModalDialog,
+        child: const Text("Cancel"),
+      ),
+
+      const SizedBox(
+        width: 20,
+      ),
+    ]);
   }
 }

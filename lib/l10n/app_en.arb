@@ -1,5 +1,16 @@
 {
   "whatWasIJustDoing": "What was I just doing?",
+  "dateTimeFormat": " EE MM-dd HH:mm ",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "minutesAgo": "min ago",
+  "hoursAgo": "h ago",
+  "daysAgo": "d ago",
+  "weeksAgo": "w ago",
+  "monthsAgo": "m ago",
+  "yearsAgo": "y ago",
+  "dateFormat": "EE MM-dd",
+  "timeFormat": "HH:mm",
   
   "whatDoYouWantToDo": "What do you want to do next?",
   "recordNextActivity": "Record what you do next",

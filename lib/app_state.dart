@@ -2,24 +2,29 @@ import 'dart:async';
 import 'dart:math';
 
 //  entities
-import 'calendar.dart';
 import 'task.dart';
-
-//  widgets
-import 'idle.dart';
-import 'working.dart';
 
 //  services
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 //  utils
 import 'simple_recorder.dart';
 import 'audio_processing.dart';
+import 'working_timer.dart';
 
 enum ActivityState {
   idle,
   working,
+}
+
+enum ScreenState {
+  base,
+  taskList,
+}
+
+enum ModalDialogType {
+  none,
+  confirmRecord,
 }
 
 enum RemindFrequency {
@@ -34,6 +39,8 @@ class AppState extends ChangeNotifier {
   final _audioProcessor = AudioProcessor();
 
   var activityState = ActivityState.idle;
+  var screenState = ScreenState.base;
+  var modalDialogType = ModalDialogType.none;
   var remindFrequency = RemindFrequency.debug;
   var currentTask = Task();
   final _timer = WorkingTimer();
@@ -44,14 +51,14 @@ class AppState extends ChangeNotifier {
     RemindFrequency.frequent: 2,
     RemindFrequency.normal: 5,
     RemindFrequency.rare: 10,
-    RemindFrequency.debug: 0.1,
+    RemindFrequency.debug: 0.5,
   };
 
   final maximumTimeTable = {  // minutes
     RemindFrequency.frequent: 5,
     RemindFrequency.normal: 10,
     RemindFrequency.rare: 30,
-    RemindFrequency.debug: 0.3,
+    RemindFrequency.debug: 1.0,
   };
 
   AppState() {
@@ -110,17 +117,19 @@ class AppState extends ChangeNotifier {
     _audioProcessor.playSequence(
       items: ["assets:audio/imakara","temp:${currentTask.mediaPath}","assets:audio/woShimasu"],
       onPlayEnded: () {
-        recorder?.mode = RecorderWidgetMode.confirm;
+        openModalDialog(ModalDialogType.confirmRecord);
         notifyListeners();
       }
     );
   }
 
+/*
   newTask() {
     currentTask = Task();
     recorder?.mode = RecorderWidgetMode.record;
     notifyListeners();
   }
+*/
 
   startWork({Task? task}) {
     if (task != null) {
@@ -132,7 +141,10 @@ class AppState extends ChangeNotifier {
       currentTask.mediaPath = recorder?.mediaPath ?? "";
     }
 
+    closeModalDialog();
     activityState = ActivityState.working;
+    screenState = ScreenState.base;
+
     notifyListeners();
     startReminder();
   }
@@ -146,6 +158,12 @@ class AppState extends ChangeNotifier {
     stopReminder();
     notifyListeners();
   }
+
+  /*
+   *
+   *   Reminder
+   *
+   */
 
   startReminder() {
     scheduleNextReminder();
@@ -163,62 +181,61 @@ class AppState extends ChangeNotifier {
     });
   }
 
+  fireReminder() {
+    _timer.cancel();
+    doReminderTask();
+  }
+
   stopReminder() {
     _timer.cancel();
   }
 
   double getProgress() {
+    if (!_timer.isActive) return 0;
     return (_timer.elapsed.inMilliseconds / 1000) / timerDuration.toDouble();
   }
 
   doReminderTask() {
-    /*
-    if (recorder == null) { return; }
-    recorder?.playRecorded().then((value) => {
-      scheduleNextReminder()
-    });
-    */
+    var random = Random();
+    var index = random.nextInt(3) + 1;
     _audioProcessor.playSequence(
-      items: [/*"assets:audio/imakara",*/"temp:${currentTask.mediaPath}"/*,"assets:audio/woShimasu"*/],
+      items: ["assets:audio/parrot$index", "temp:${currentTask.mediaPath}"],
       onPlayEnded: () {
         scheduleNextReminder();
       }
     );
-
   }
-}
 
-class ContentPage extends StatelessWidget {
-  const ContentPage({
-    super.key,
-  });
+  /*
+   *
+   *   Task List
+   *
+   */
+  openTaskList() {
+    screenState = ScreenState.taskList;
 
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-
-    return Column(
-      children: [
-        const CalendarWidget(),
-        Row(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Image.asset("assets/images/parrot.jpg"),
-            ),
-            Expanded(
-              flex: 7,
-              child: 
-                  appState.activityState == ActivityState.idle 
-                  ? IdleWidget(appState: appState) 
-                  : WorkingWidget(appState: appState)
-            ),
-          ],
-        ),
-      ],
-    );
-
-
-
+    notifyListeners();
   }
+
+  closeTaskList() {
+    screenState = ScreenState.base;
+    notifyListeners();
+  }
+
+  /*
+   *
+   *  Modal Dialog
+   * 
+   */
+
+  openModalDialog(ModalDialogType type) {
+    modalDialogType = type;
+    notifyListeners();
+  }
+
+  closeModalDialog() {
+    modalDialogType = ModalDialogType.none;
+    notifyListeners();
+  }
+
 }

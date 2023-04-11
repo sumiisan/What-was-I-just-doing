@@ -23,7 +23,7 @@ class _WorkProgressIndicatorState extends State<WorkProgressIndicator> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       setState(() {});
     });
   }
@@ -43,28 +43,35 @@ class _WorkProgressIndicatorState extends State<WorkProgressIndicator> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        SizedBox(height: 25),
-        SizedBox(
-          width: 60,
-          height: 60,
+        const SizedBox(height: 25),
+        GestureDetector(
+          onTap: () {
+            widget.appState.fireReminder();
+          },
           child:
-            Stack(
-              children: [
-                CircularProgressIndicator(
-                  value: widget.appState.getProgress(),         
-                  strokeWidth: 40,
-                  color: Colors.blue,
+            SizedBox(
+              width: 60,
+              height: 60,
+              child:
+                Stack(
+                  children: [
+                    CircularProgressIndicator(
+                      value: widget.appState.getProgress(),         
+                      strokeWidth: 40,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+
+                    ),
+                    Text(
+                      workingMessage, 
+                      style: const TextStyle(
+                        fontSize: 16,
+                      )
+                    ),
+                  ]
                 ),
-                Text(
-                  workingMessage, 
-                  style: TextStyle(
-                    fontSize: 16,
-                  )
-                ),
-              ]
-            ),
+            )
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }

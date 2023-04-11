@@ -1,5 +1,16 @@
 {
   "whatWasIJustDoing": "いまなにしてたっけ?",
+  "dateTimeFormat": " M月d日(EE) HH:mm ",
+  "today": "今日",
+  "yesterday": "昨日",
+  "minutesAgo": "分前",
+  "hoursAgo": "時間前",
+  "daysAgo": "日前",
+  "weeksAgo": "週間前",
+  "monthsAgo": "月前",
+  "yearsAgo": "年前",
+  "dateFormat": "M月d日(EE)",
+  "timeFormat": "HH:mm",
 
   "whatDoYouWantToDo": "これからなにをする?",
   "recordNextActivity": "次にすることを録音する",
