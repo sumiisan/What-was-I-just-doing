@@ -36,7 +36,8 @@ class AppState extends ChangeNotifier {
   var activityState = ActivityState.idle;
   var remindFrequency = RemindFrequency.debug;
   var currentTask = Task();
-  late Timer _timer;
+  final _timer = WorkingTimer();
+  int timerDuration = 0;
   Recorder? recorder;
 
   final minimumTimeTable = {  // minutes
@@ -154,16 +155,20 @@ class AppState extends ChangeNotifier {
     // decide next reminder time
     var random = Random();
     var fluct = (maximumTimeTable[remindFrequency]! - minimumTimeTable[remindFrequency]!) * 60 * random.nextDouble(); // seconds
-    var duration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
+    timerDuration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
 
-    _timer = Timer(Duration(seconds: duration), () {
-      currentTask.timeSpent += Duration(seconds: duration);
+    _timer.start(Duration(seconds: timerDuration), onFinish: () {
+      currentTask.timeSpent += Duration(seconds: timerDuration);
       doReminderTask();
     });
   }
 
   stopReminder() {
     _timer.cancel();
+  }
+
+  double getProgress() {
+    return (_timer.elapsed.inMilliseconds / 1000) / timerDuration.toDouble();
   }
 
   doReminderTask() {
