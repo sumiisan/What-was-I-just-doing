@@ -30,5 +30,12 @@
   "finishTask": "できた！",
   "abortTask": "できてないけどやめる！",
 
+  "startDate": "始めた日時",
+  "spentTime": "かけた時間",
+  "done": "✅完了",
+  "wip": "🏃‍♀️未完",
+  "openTaskList": "過去にしたこと",
+  "closeTaskList": "もどる",
+
   "endOfStringAsset": "おわり"
 }

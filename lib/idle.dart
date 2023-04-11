@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_state.dart';
 import 'simple_recorder.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class IdleWidget extends StatelessWidget {
   const IdleWidget({
@@ -12,7 +13,7 @@ class IdleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    var ctx = AppLocalizations.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -25,7 +26,7 @@ class IdleWidget extends StatelessWidget {
             foregroundColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Theme.of(context).colorScheme.background,
           ),
-          child: Text("past tasks")
+          child: Text(ctx?.openTaskList ?? "past tasks")
         ),
       ],
     );

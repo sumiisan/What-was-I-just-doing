@@ -230,12 +230,10 @@ class ConfirmRecordingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //var isNewTask = appState.currentTask.timeSpent.inSeconds == 0;
 
     var ctx = AppLocalizations.of(context);
     var confirmText = ctx?.confirmText ?? "[missing]";
     var proceedCaption = ctx?.proceed ?? "[missing]";
-    //var retakeCaption = ctx?.recordAgain ?? "[missing]";
     var playCaption = ctx?.listenAgain ?? "[missing]";
 
     return Column(children: [
@@ -248,12 +246,6 @@ class ConfirmRecordingWidget extends StatelessWidget {
         onPressed: appState.confirmTask,
         child: Text(playCaption),
       ),
-/*      if (isNewTask)
-        ElevatedButton(
-          onPressed: appState.startRecord,
-          child: Text(retakeCaption),
-        ),
-      if (!isNewTask)*/
       ElevatedButton(
         onPressed: appState.closeModalDialog,
         child: const Text("Cancel"),

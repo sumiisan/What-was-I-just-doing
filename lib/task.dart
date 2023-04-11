@@ -7,7 +7,6 @@ import 'dart:convert';
 
 class Task {
   String id;
-//  String get name => formatDate(created);
   String description = "";
   String mediaPath = "";
   bool isFinished = false;
@@ -56,7 +55,7 @@ class Task {
 
     var relativeTimeString = "";
     if (minutesAgo < 60) {
-      relativeTimeString = "$minutesAgo${ctx?.minutesAgo ?? "min ago"}}";
+      relativeTimeString = "$minutesAgo${ctx?.minutesAgo ?? "min ago"}";
     } else if (minutesAgo < 60 * 24) {
       relativeTimeString = "${minutesAgo ~/ 60}${ctx?.hoursAgo ?? "h ago"}";
     } else if (minutesAgo < 60 * 24 * 7) {
@@ -101,6 +100,7 @@ class TaskData {
     return SharedPreferencesAccessor().loadTasks().then((value) {
       if (value != null) {
         tasks.addAll(value);
+        tasks.sort((a, b) => b.created.compareTo(a.created));
       }
     });
   }

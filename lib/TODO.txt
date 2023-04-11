@@ -2,19 +2,13 @@ TODO list
 
 
 - Basic functionality
-    - sort task list
-    - bird's voice
-    - remind me now button
     - display the time when the task was done
 
 - UI
     - set remind frequency
-    - update task deskription label periodically (relative time display)
+    - update task description label periodically (relative time display)
     - multiple tasks ?
 
 - Audio
-
     - Apply peak limiter
-
-    - Pitch shift recorded audio
-        - automatically determine cycle based on f0 freq, or avoid amplitude leap using bandpass filter
+    - automatically determine pitch shift cycle based on f0 freq, or avoid amplitude leap using bandpass filter

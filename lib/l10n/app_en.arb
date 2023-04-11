@@ -30,5 +30,12 @@
   "finishTask": "I'm done!",
   "abortTask": "Abort",
 
+  "startDate": "Start Date",
+  "spentTime": "Time Spent",
+  "done": "Done ✅",
+  "wip": "WIP 🏃‍♀️",
+  "openTaskList": "Recent Tasks",
+  "closeTaskList": "Return",
+
   "endOfStringAsset": "end"
 }

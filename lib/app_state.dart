@@ -150,12 +150,13 @@ class AppState extends ChangeNotifier {
   }
 
   finishWork({bool isAborted = false}) {
+    stopReminder();
+
     currentTask.isFinished = !isAborted;
     _taskData.storeTask(currentTask);
     currentTask = Task();   // because we have stored the task, we can clear the current task
 
     activityState = ActivityState.idle;
-    stopReminder();
     notifyListeners();
   }
 
@@ -175,8 +176,8 @@ class AppState extends ChangeNotifier {
     var fluct = (maximumTimeTable[remindFrequency]! - minimumTimeTable[remindFrequency]!) * 60 * random.nextDouble(); // seconds
     timerDuration = (minimumTimeTable[remindFrequency]! * 60 + fluct).toInt(); // seconds
 
+    currentTask.timeSpent += Duration(seconds: timerDuration);
     _timer.start(Duration(seconds: timerDuration), onFinish: () {
-      currentTask.timeSpent += Duration(seconds: timerDuration);
       doReminderTask();
     });
   }

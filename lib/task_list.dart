@@ -20,7 +20,8 @@ class TaskListWidget extends StatefulWidget {
 class _TaskListWidgetState extends State<TaskListWidget> {
   @override
   Widget build(BuildContext context) {
-    var locale = AppLocalizations.of(context)?.localeName ?? "en";
+    var ctx = AppLocalizations.of(context);
+    var locale = ctx?.localeName ?? "en";
 
     return 
     Column(
@@ -34,7 +35,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
             foregroundColor: Theme.of(context).colorScheme.primary,
             backgroundColor: Theme.of(context).colorScheme.background,
           ),
-          child: Text("close task list")
+          child: Text(ctx?.closeTaskList ?? "dismiss")
         ),
 
         FutureBuilder(future: widget.appState.getTasks(),
@@ -44,9 +45,18 @@ class _TaskListWidgetState extends State<TaskListWidget> {
               const visualDensity = VisualDensity(horizontal: -4, vertical: -4);
               return Column(
                 children: [
+                  ListTile(
+                    leading: const Text(""),
+                    title: Text(ctx?.startDate ?? "Start date"),
+                    trailing: Text(ctx?.spentTime ?? "Spent Time"),
+                    visualDensity: visualDensity,
+                  ),
                   for (var task in tasks.data!) 
                     ListTile(
-                      leading: Text(task.isFinished ? "Done ✅" : "WIP 🏃‍♀️"), // TODO: use icons instead
+                      leading: Text(task.isFinished 
+                        ? ctx?.done ?? "Done" 
+                        : ctx?.wip ?? "WIP"
+                      ), // TODO: use icons instead
                       title: Text(task.localizedName(context: context), 
                         style: TextStyle(color: task.isFinished ? Colors.black : Colors.blue), 
                       ),

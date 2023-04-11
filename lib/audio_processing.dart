@@ -49,9 +49,15 @@ class AudioProcessor {
 
       if (path.startsWith('temp:')) {
         final directory = await getTemporaryDirectory();
-        buffer = FlutterSoundHelper().waveToPCMBuffer(
-          inputBuffer: await getTemporaryData("${directory.path}/${path.substring(5)}"),
-        );
+        try {
+          buffer = FlutterSoundHelper().waveToPCMBuffer(
+            inputBuffer: await getTemporaryData("${directory.path}/${path.substring(5)}"),
+          );
+        } catch (e) {
+          Logger().log(Level.error, "waveToPCMBuffer failed: $e");
+          if (onPlayEnded != null) onPlayEnded();   // we call onPlayEnded() even if we failed to play
+          return;
+        }
       }
       if (path.startsWith('assets:')) {
         String fileName = path.substring(7);
