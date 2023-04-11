@@ -55,17 +55,27 @@ class _WorkProgressIndicatorState extends State<WorkProgressIndicator> {
               child:
                 Stack(
                   children: [
-                    CircularProgressIndicator(
-                      value: widget.appState.getProgress(),         
-                      strokeWidth: 40,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          value: widget.appState.getProgress(),         
+                          strokeWidth: 40,
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                      ],
                     ),
-                    Text(
-                      workingMessage, 
-                      style: const TextStyle(
-                        fontSize: 16,
-                      )
+                    
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          workingMessage, 
+                          style: const TextStyle(
+                            fontSize: 16,
+                          )
+                        ),
+                      ],
                     ),
                   ]
                 ),

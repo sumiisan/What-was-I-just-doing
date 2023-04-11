@@ -29,6 +29,8 @@
   "workingOnTask": "Working",
   "finishTask": "I'm done!",
   "abortTask": "Abort",
+  "faster": "Faster",
+  "slower": "Slower",
 
   "startDate": "Start Date",
   "spentTime": "Time Spent",

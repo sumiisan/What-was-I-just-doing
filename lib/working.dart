@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'task.dart';
 
 import 'app_state.dart';
 import 'progress_indicator.dart';
@@ -27,8 +28,31 @@ class WorkingWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(appState.currentTask.localizedName(context: context)),
-        WorkProgressIndicator(appState: appState),
+        TaskNameLabel(appState: appState),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.background,
+            ),
+            onPressed: appState.fasterNotificationFrequency, 
+            child: Text(ctx?.faster ?? "Faster")
+          ),
+          SizedBox(width: 120, 
+            child: WorkProgressIndicator(appState: appState)
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.background,
+            ),
+            onPressed: appState.slowerNotificationFrequency, 
+            child: Text(ctx?.slower ?? "Slower")
+          ),
+        ],),
+        
         ElevatedButton(
           onPressed: () {
             appState.finishWork();
@@ -45,3 +69,4 @@ class WorkingWidget extends StatelessWidget {
     );
   }
 }
+

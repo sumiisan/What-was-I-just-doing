@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:what_was_i_just_doing/task_list.dart';
 
@@ -20,6 +21,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, // 画面を縦向きに固定
+    ]);
     var title = AppLocalizations.of(context)?.whatWasIJustDoing ?? "?";
     return ChangeNotifierProvider(
       create: (context) => AppState(),

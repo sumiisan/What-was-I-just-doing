@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:convert';
 
+import 'app_state.dart';
+
 class Task {
   String id;
   String description = "";
@@ -155,5 +157,19 @@ class SharedPreferencesAccessor {
       return tasks;
     }
     return null;
+  }
+}
+
+class TaskNameLabel extends StatelessWidget {
+  const TaskNameLabel({
+    super.key,
+    required this.appState,
+  });
+
+  final AppState appState;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(appState.currentTask.localizedName(context: context));
   }
 }

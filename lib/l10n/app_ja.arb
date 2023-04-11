@@ -29,6 +29,8 @@
   "workingOnTask": "作業中",
   "finishTask": "できた！",
   "abortTask": "できてないけどやめる！",
+  "faster": "早く",
+  "slower": "遅く",
 
   "startDate": "始めた日時",
   "spentTime": "かけた時間",

@@ -3,6 +3,7 @@ TODO list
 
 - Basic functionality
     - display the time when the task was done
+    - chirp while idling
 
 - UI
     - set remind frequency

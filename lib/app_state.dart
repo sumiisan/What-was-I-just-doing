@@ -28,10 +28,10 @@ enum ModalDialogType {
 }
 
 enum RemindFrequency {
+  debug,
   frequent,
   normal,
   rare,
-  debug,
 }
 
 class AppState extends ChangeNotifier {
@@ -48,17 +48,17 @@ class AppState extends ChangeNotifier {
   Recorder? recorder;
 
   final minimumTimeTable = {  // minutes
+    RemindFrequency.debug: 0.5,
     RemindFrequency.frequent: 2,
     RemindFrequency.normal: 5,
     RemindFrequency.rare: 10,
-    RemindFrequency.debug: 0.5,
   };
 
   final maximumTimeTable = {  // minutes
+    RemindFrequency.debug: 1.0,
     RemindFrequency.frequent: 5,
     RemindFrequency.normal: 10,
     RemindFrequency.rare: 30,
-    RemindFrequency.debug: 1.0,
   };
 
   AppState() {
@@ -189,6 +189,24 @@ class AppState extends ChangeNotifier {
 
   stopReminder() {
     _timer.cancel();
+  }
+
+  slowerNotificationFrequency() {
+    changeNotificationFrequency(1);
+  }
+
+  fasterNotificationFrequency() {
+    changeNotificationFrequency(-1);
+  }
+
+  changeNotificationFrequency(int direction) {
+    var index = RemindFrequency.values.indexOf(remindFrequency);
+    index += direction;
+    if (index < 0) index = 0;
+    if (index >= RemindFrequency.values.length) index = RemindFrequency.values.length - 1;
+    remindFrequency = RemindFrequency.values[index];
+    _timer.cancel();
+    scheduleNextReminder();
   }
 
   double getProgress() {

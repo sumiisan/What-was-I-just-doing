@@ -55,6 +55,7 @@ class AudioProcessor {
           );
         } catch (e) {
           Logger().log(Level.error, "waveToPCMBuffer failed: $e");
+          Logger().log(Level.error, "path: $path / dir: ${directory.path}");
           if (onPlayEnded != null) onPlayEnded();   // we call onPlayEnded() even if we failed to play
           return;
         }
