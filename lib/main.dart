@@ -27,16 +27,36 @@ class MainApp extends StatelessWidget {
       DeviceOrientation.portraitUp, // 画面を縦向きに固定
     ]);
     var title = AppLocalizations.of(context)?.whatWasIJustDoing ?? "?";
+
+    const themeColor = Color.fromARGB(255, 2, 139, 112);
+    var colorScheme = ColorScheme.fromSeed(seedColor: themeColor);
+
+    var themeData = ThemeData(
+      useMaterial3: false,
+      colorScheme: colorScheme,
+      textTheme: ThemeData.light().textTheme.apply(
+        bodyColor: Colors.red,// colorScheme.primary,
+        displayColor: Colors.red,//colorScheme.primary,
+      ),
+      /*
+      textTheme: TextTheme(
+        bodySmall: TextStyle(color: colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold), 
+      ),*/
+      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
+        side: BorderSide(color: colorScheme.primary, width: 2),
+        textStyle: TextStyle(color: colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+      )),
+      listTileTheme: ListTileThemeData(
+        textColor: colorScheme.primary,
+      ), 
+    );
+    
     return ChangeNotifierProvider(
       create: (context) => AppState(),
       child: MaterialApp(
         title: title,
-        theme: ThemeData(
-          useMaterial3: false,
-          colorScheme: ColorScheme.fromSeed(seedColor:
-           Color.fromARGB(255, 219, 146, 0),
-           ),
-        ),
+        theme: themeData,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -61,26 +81,17 @@ class MyHomePage extends StatelessWidget {
     var title = AppLocalizations.of(context)?.whatWasIJustDoing ?? "[a]";
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
       body: DefaultTextStyle(
         style: const TextStyle(
           color: Color.fromARGB(255, 65, 65, 65),
           fontSize: 24,
         ),
         child: Center(
-          child:
-          ButtonTheme(
-            minWidth: 400,
-            height: 60,
-            child: Localizations.override(   // override locale for testing purpose TODO: remove this later
-              context: context,
-              locale: const Locale('ja'),
-              child: const ContentPage(),
-            ),
-          ), 
-          
+          child: Localizations.override(   // override locale for testing purpose TODO: remove this later
+            context: context,
+            locale: const Locale('ja'),
+            child: const ContentPage(),
+          ),
         ),
       ) 
     );
@@ -95,7 +106,9 @@ class ContentPage extends StatelessWidget {
   Widget baseWidget(AppState appState) {
     return Column(
       children: [
+        const SizedBox(height: 50),
         const CalendarWidget(),
+        const SizedBox(height: 50),
         Row(
           children: [
             Expanded(

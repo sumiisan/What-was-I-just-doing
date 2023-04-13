@@ -247,6 +247,7 @@ class AppState extends ChangeNotifier {
 
   closeModalDialog() {
     modalDialogType = ModalDialogType.none;
+    recorder?.mode = RecorderWidgetMode.record;
     notifyListeners();
   }
 }

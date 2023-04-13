@@ -5,13 +5,22 @@ TODO list
     - created date sometimes resets
     - time spent is bigger than the actual time
 
-- Basic functionality
-    - silence idle chirping during night
+- Basic functionalities
+    - add icon to task
+        - cooking, searching, cleaning, writing, meeting, etc
+        - sound icon
+    - make screen design cleaner
+        - better layout
+        - better theme
+    - indicate reminder frequency
+    - english localization of guidance voice
 
-- Advanced UI
+- Nice to have features
+    - silence idle chirping during night
+    - sing a song once a day (long enough to find loro when he is lost)
     - display the time when the task was done
     - multiple tasks ?
 
-- Audio
-    - Apply peak limiter
+- Yagni
+    - apply peak limiter
     - automatically determine pitch shift cycle based on f0 freq, or avoid amplitude leap using bandpass filter

@@ -36,6 +36,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:what_was_i_just_doing/task.dart';
 
 import 'app_state.dart';
 
@@ -194,11 +195,8 @@ class Recorder extends State<SimpleRecorderWidget> {
       case RecorderWidgetMode.record:
         return Column(children: [
             Text(_mRecorder!.isRecording ? prompt2 : prompt1),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: appState.recordButtonTapped,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(300, 70),
-              ),
               child: Text(_mRecorder!.isRecording ? endRecordCaption : recordCaption),
             ),
             const SizedBox(
@@ -207,6 +205,13 @@ class Recorder extends State<SimpleRecorderWidget> {
             Text(_mRecorder!.isRecording
                 ? recordingCaption
                 : ''),
+            if (!_mRecorder!.isRecording)
+              OutlinedButton(
+                onPressed: (){ 
+                  appState.openTaskList();
+                }, 
+                child: Text(ctx?.openTaskList ?? "past tasks",)
+              ),
           ]);
 
       case RecorderWidgetMode.playback:
@@ -234,19 +239,16 @@ class ConfirmRecordingWidget extends StatelessWidget {
     var ctx = AppLocalizations.of(context);
     var confirmText = ctx?.confirmText ?? "[missing]";
     var proceedCaption = ctx?.proceed ?? "[missing]";
-    var playCaption = ctx?.listenAgain ?? "[missing]";
 
     return Column(children: [
+      if (appState.currentTask.timeSpent > Duration.zero)
+        TaskNameLabel(task: appState.currentTask),
       Text(confirmText),
-      ElevatedButton(
+      OutlinedButton(
         onPressed: appState.startWork,
         child: Text(proceedCaption),
       ),
-      ElevatedButton(
-        onPressed: appState.confirmTask,
-        child: Text(playCaption),
-      ),
-      ElevatedButton(
+      OutlinedButton(
         onPressed: appState.closeModalDialog,
         child: const Text("Cancel"),
       ),

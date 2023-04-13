@@ -83,7 +83,7 @@ class AudioProcessor {
 
       await _mPlayer!.feedFromStream(buffer!);
       busy = false;
-      Future.delayed(Duration(milliseconds: 100), () async {
+      Future.delayed(const Duration(milliseconds: 100), () async {
         await _mPlayer!.stopPlayer();
         if (onPlayEnded != null) { onPlayEnded(); }
       });
@@ -153,7 +153,7 @@ class AudioProcessor {
 
     amplify(input, scale: scale);
 
-    //  gate
+    //  strip silence
     var p = 0;
 
     var startMutePosition = 0;
@@ -163,11 +163,11 @@ class AudioProcessor {
     while (p < length) {
       var positions = findNextGap(input, seekStartPosition: p);
       startMutePosition = positions[0];
-      if (startMutePosition - margin > endMutePosition) {  // if there is a gap between the previous and the current one
+      if (startMutePosition - margin > endMutePosition) {  // if there is enough gap between the previous and the current one
         startMutePosition -= margin;  // move the start of the mute gap back by 1024 samples
       }
       endMutePosition = positions[1];
-      if (endMutePosition + margin < length) {  // if there is a gap after the current one
+      if (endMutePosition + margin < length) {  // if there is enough gap after the current one
         endMutePosition += margin;  // move the end of the mute gap forward by 1024 samples
       }
 
@@ -204,7 +204,7 @@ class AudioProcessor {
     var gateThreshold = 0.05 * 0x7fff;   // this is fixed because we assume a normalized input
 
     var p = seekStartPosition;
-    var minimumGap = 0.2 * _tSampleRate;
+    var minimumGap = 0.3 * _tSampleRate;
 
     while(p < length) {
 
@@ -239,39 +239,4 @@ class AudioProcessor {
     var rms = sqrt(sum / length);
     return rms;
   }
-
-
-  // ----------------------------------------------------------------------------------------------------------------------
-/*
-  @override
-  Widget build(BuildContext context) {
-
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.all(3),
-          padding: const EdgeInsets.all(3),
-          height: 80,
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Color(0xFFFAF0E6),
-            border: Border.all(
-              color: Colors.indigo,
-              width: 3,
-            ),
-          ),
-          child: Row(children: [
-            ElevatedButton(
-              onPressed: () {
-                play(path: "temp:$mediaPath");
-              },
-              //color: Colors.white,
-              child: Text('Play!'),
-            ),
-          ]),
-        ),
-      ],
-    );
-  }*/
 }

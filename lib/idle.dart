@@ -19,16 +19,6 @@ class IdleWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         SimpleRecorderWidget(appState),
-        ElevatedButton(
-          onPressed: (){ 
-            appState.openTaskList();
-          }, 
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).colorScheme.background,
-          ),
-          child: Text(ctx?.openTaskList ?? "past tasks")
-        ),
       ],
     );
   }

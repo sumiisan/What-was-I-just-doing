@@ -28,7 +28,7 @@ class _TaskListWidgetState extends State<TaskListWidget> {
     Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children:[
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () { 
             widget.appState.closeTaskList();
           }, 

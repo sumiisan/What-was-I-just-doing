@@ -13,11 +13,10 @@
   "timeFormat": "HH:mm",
   
   "whatDoYouWantToDo": "What do you want to do next?",
-  "recordNextActivity": "Record what you do next",
+  "recordNextActivity": "Something new",
   "sayNextActivity": "Say what you do next",
   "endRecording": "End recording",
   "recordingInProgress": "recording your voice..",
-  "whatYouDidSoFar": "See what you did so far",
 
   "playRecording": "playing back your recorded voice..", 
   "confirmText": "Do you want to do this now?",
@@ -36,7 +35,7 @@
   "spentTime": "Time Spent",
   "done": "Done ✅",
   "wip": "WIP 🏃‍♀️",
-  "openTaskList": "Recent Tasks",
+  "openTaskList": "Something you did before",
   "closeTaskList": "Return",
 
   "endOfStringAsset": "end"

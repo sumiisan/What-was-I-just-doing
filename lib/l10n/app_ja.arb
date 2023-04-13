@@ -13,11 +13,10 @@
   "timeFormat": "HH:mm",
 
   "whatDoYouWantToDo": "これからなにをする?",
-  "recordNextActivity": "次にすることを録音する",
-  "sayNextActivity": "次にすることを話してください",
+  "recordNextActivity": "あたらしいこと",
+  "sayNextActivity": "これからすることを話してください",
   "endRecording": "録音を終了する",
   "recordingInProgress": "あなたの声を録音しています",
-  "whatYouDidSoFar": "今までやったことを見る",
 
   "playRecording": "あなたの録音した声を再生しています", 
   "confirmText": "これからこれをしますか?",
@@ -36,7 +35,7 @@
   "spentTime": "かけた時間",
   "done": "✅完了",
   "wip": "🏃‍♀️未完",
-  "openTaskList": "過去にしたこと",
+  "openTaskList": "いままでしたこと",
   "closeTaskList": "もどる",
 
   "endOfStringAsset": "おわり"

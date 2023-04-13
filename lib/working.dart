@@ -23,6 +23,13 @@ class WorkingWidget extends StatelessWidget {
     var finishMessage = ctx?.finishTask ?? "Finish";
     var abortMessage = ctx?.abortTask ?? "Abort";
 
+    var thinBorderStyle = OutlinedButton.styleFrom(
+      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1),
+      textStyle: TextStyle(
+        color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.normal,
+      ),
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -31,34 +38,28 @@ class WorkingWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.background,
-            ),
-            onPressed: appState.fasterNotificationFrequency, 
+          OutlinedButton(
+            onPressed: appState.fasterNotificationFrequency,
+            style: thinBorderStyle, 
             child: Text(ctx?.faster ?? "Faster")
           ),
           SizedBox(width: 120, 
             child: WorkProgressIndicator(appState: appState)
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.background,
-            ),
+          OutlinedButton(
             onPressed: appState.slowerNotificationFrequency, 
+            style: thinBorderStyle, 
             child: Text(ctx?.slower ?? "Slower")
           ),
         ],),
         
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () {
             appState.finishWork();
           },
           child: Text(finishMessage),
         ),
-        ElevatedButton(
+        OutlinedButton(
           onPressed: () {
             appState.finishWork(isAborted: true);
           },
